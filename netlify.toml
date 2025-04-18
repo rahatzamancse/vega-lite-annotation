@@ -1,6 +1,6 @@
 [build]
 base = "."
-publish = "packages/vega-lite-annotation-playground/dist"
+publish = "packages/vega-lite-annotation-playground/build"
 command = "pnpm --filter vega-lite-annotation-playground... build"
 
 [build.environment]
