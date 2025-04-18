@@ -1,0 +1,67 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+    "description": "A scatterplot showing body mass and flipper lengths of penguins.",
+    "name": "Scatterplot",
+    "data": {
+        "url": "data/penguins.json"
+    },
+    "mark": "point",
+    "encoding": {
+        "x": {
+            "field": "Flipper Length (mm)",
+            "type": "quantitative",
+            "scale": {
+                "zero": false
+            }
+        },
+        "y": {
+            "field": "Body Mass (g)",
+            "type": "quantitative",
+            "scale": {
+                "zero": false
+            }
+        },
+        "color": {
+            "field": "Species",
+            "type": "nominal"
+        },
+        "shape": {
+            "field": "Species",
+            "type": "nominal"
+        }
+    },
+    "annotations": [
+        {
+            "target": {
+                "type": "pixel-space",
+                "x": 70,
+                "y": 40
+            },
+            "text": {
+                "text": "Pixel Space"
+            }
+        },
+        {
+            "target": {
+                "type": "data-index",
+                "indices": [
+                    28,
+                    38
+                ]
+            },
+            "text": {
+                "text": "Indices",
+                "dy": -5
+            }
+        },
+        {
+            "target": {
+                "type": "data-expr",
+                "expr": "datum['Beak Length (mm)'] >= 55"
+            },
+            "text": {
+                "text": "Large Beaks"
+            }
+        }
+    ]
+}

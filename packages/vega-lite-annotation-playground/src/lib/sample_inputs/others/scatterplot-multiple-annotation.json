@@ -1,0 +1,121 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "description": "A scatterplot showing body mass and flipper lengths of penguins.",
+    "data": {
+        "url": "data/penguins.json"
+    },
+    "mark": "point",
+    "encoding": {
+        "x": {
+            "field": "Flipper Length (mm)",
+            "type": "quantitative",
+            "scale": {
+                "zero": false
+            }
+        },
+        "y": {
+            "field": "Body Mass (g)",
+            "type": "quantitative",
+            "scale": {
+                "zero": false
+            }
+        },
+        "color": {
+            "field": "Species",
+            "type": "nominal"
+        },
+        "shape": {
+            "field": "Species",
+            "type": "nominal"
+        }
+    },
+    "annotations": [
+        {
+            "target": {
+                "query": "datum.Species == 'Gentoo' && datum['Body Mass (g)'] > 5500"
+            },
+            "name": "large-gentoo",
+            "connector": {
+                "connector": "line",
+                "style": {
+                    "stroke": "darkblue",
+                    "strokeWidth": 2,
+                    "arrowEnd": true
+                }
+            },
+            "text": {
+                "text": "Gentoo penguins are larger",
+                "style": {
+                    "fontSize": 14,
+                    "fontWeight": "bold",
+                    "fill": "darkblue"
+                },
+                "anchor": "upperRight"
+            }
+        },
+        {
+            "target": {
+                "query": "datum.Species == 'Adelie'"
+            },
+            "name": "adelie-cluster",
+            "enclosure": {
+                "enclosureType": "ellipse",
+                "style": {
+                    "stroke": "green",
+                    "strokeWidth": 1,
+                    "strokeDasharray": [
+                        4,
+                        2
+                    ]
+                }
+            },
+            "text": {
+                "text": "Adelie species cluster",
+                "style": {
+                    "fontSize": 12,
+                    "fontWeight": "bold",
+                    "fill": "green"
+                },
+                "anchor": "bottomMiddle"
+            }
+        },
+        {
+            "target": {
+                "query": "datum.Species == 'Chinstrap' && datum['Flipper Length (mm)'] > 195"
+            },
+            "name": "chinstrap-correlation",
+            "text": {
+                "text": "Interesting correlation",
+                "style": {
+                    "fontSize": 12,
+                    "fontWeight": "bold",
+                    "fill": "red"
+                },
+                "anchor": "upperLeft"
+            }
+        },
+        {
+            "target": {
+                "type": "chartpart",
+                "part": "legend",
+                "itemName": "Gentoo"
+            },
+            "name": "gentoo-legend",
+            "text": {
+                "text": "G for Green",
+                "style": {
+                    "fontSize": 10,
+                    "fontStyle": "italic",
+                    "fill": "green"
+                }
+            },
+            "connector": {
+                "connector": "line",
+                "style": {
+                    "stroke": "green",
+                    "strokeWidth": 1
+                }
+            }
+        }
+    ]
+}

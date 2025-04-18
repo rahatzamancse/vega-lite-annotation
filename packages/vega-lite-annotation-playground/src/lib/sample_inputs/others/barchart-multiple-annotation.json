@@ -1,0 +1,146 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "data": {
+        "values": [
+            {
+                "category": "A",
+                "group": "x",
+                "value": 0.1
+            },
+            {
+                "category": "A",
+                "group": "y",
+                "value": 0.6
+            },
+            {
+                "category": "A",
+                "group": "z",
+                "value": 0.9
+            },
+            {
+                "category": "B",
+                "group": "x",
+                "value": 0.7
+            },
+            {
+                "category": "B",
+                "group": "y",
+                "value": 0.2
+            },
+            {
+                "category": "B",
+                "group": "z",
+                "value": 1.1
+            },
+            {
+                "category": "C",
+                "group": "x",
+                "value": 0.6
+            },
+            {
+                "category": "C",
+                "group": "y",
+                "value": 0.1
+            },
+            {
+                "category": "C",
+                "group": "z",
+                "value": 0.2
+            }
+        ]
+    },
+    "encoding": {
+        "color": {
+            "field": "group"
+        },
+        "x": {
+            "field": "category"
+        },
+        "xOffset": {
+            "field": "group"
+        },
+        "y": {
+            "field": "value",
+            "type": "quantitative"
+        }
+    },
+    "mark": "bar",
+    "annotations": [
+        {
+            "target": {
+                "type": "data-expr",
+                "expr": "datum.category == 'A' && datum.group == 'z'"
+            },
+            "indicator": {
+                "id": "A-z",
+                "indicatorType": "line",
+                "style": {
+                    "stroke": "red",
+                    "strokeWidth": 2,
+                    "arrowEnd": true
+                },
+                "lineTo": {
+                    "query": "datum.category == 'B' && datum.group == 'z'"
+                }
+            },
+            "text": {
+                "text": "T",
+                "style": {
+                    "fontSize": 12,
+                    "fontWeight": "bold",
+                    "fill": "red"
+                },
+                "position": "upperMiddle"
+            }
+        },
+        {
+            "target": {
+                "type": "data-expr",
+                "expr": "datum.category == 'C' && datum.group == 'x'"
+            },
+            "enclosure": {
+                "shape": "rect",
+                "style": {
+                    "stroke": "red",
+                    "strokeWidth": 2
+                }
+            },
+            "text": {
+                "text": "T",
+                "style": {
+                    "fontSize": 12,
+                    "fontWeight": "bold"
+                },
+                "position": "upperMiddle"
+            }
+        },
+        {
+            "target": {
+                "type": "axis",
+                "axis": "x",
+                "parts": "tick-label",
+                "range": {
+                    "min": "datum.category == 'A'",
+                    "max": "datum.category == 'B'"
+                }
+            },
+            "enclosure": {
+                "shape": "curly-braces",
+                "style": {
+                    "enclosureStroke": {
+                        "stroke": "red",
+                        "strokeWidth": 2
+                    }
+                }
+            },
+            "text": {
+                "text": "T",
+                "style": {
+                    "fontSize": 12,
+                    "fontWeight": "bold"
+                },
+                "position": "bottomMiddle"
+            }
+        }
+    ]
+}

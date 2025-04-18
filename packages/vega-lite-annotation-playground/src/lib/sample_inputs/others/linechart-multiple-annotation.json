@@ -1,0 +1,89 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "description": "Stock prices of 5 Tech Companies over Time.",
+    "data": {
+        "url": "data/stocks.csv"
+    },
+    "mark": {
+        "type": "line",
+        "point": true
+    },
+    "encoding": {
+        "x": {
+            "timeUnit": "year",
+            "field": "date"
+        },
+        "y": {
+            "aggregate": "mean",
+            "field": "price",
+            "type": "quantitative"
+        },
+        "color": {
+            "field": "symbol",
+            "type": "nominal"
+        }
+    },
+    "annotations": [
+        {
+            "target": {
+                "type": "data-expr",
+                "expr": "datum.symbol == 'GOOG' && datum.date.getFullYear() == 2004"
+            },
+            "text": {
+                "text": "",
+                "style": {}
+            },
+            "connector": {}
+        },
+        {
+            "target": {
+                "type": "data-expr",
+                "expr": "datum.symbol == 'APPL' && datum.date.getFullYear() == 2007"
+            },
+            "indicator": {
+                "indicatorType": "line",
+                "style": {},
+                "lineTo": {
+                    "query": "datum.symbol == 'GOOG' && datum.date.getFullYear() == 2007"
+                }
+            },
+            "text": {
+                "text": "",
+                "style": {}
+            }
+        },
+        {
+            "target": {
+                "type": "data-expr",
+                "expr": "datum.year_date <= 2007 && datum.year_date >= 2004 && datum.price > 500 && datum.price < 700"
+            },
+            "enclosure": {
+                "shape": "rect",
+                "style": {}
+            },
+            "text": {
+                "text": "First Point!",
+                "style": {}
+            }
+        },
+        {
+            "target": {
+                "type": "data-expr",
+                "expr": "datum.price == 500 && datum.year_date == 2004"
+            },
+            "indicator": {
+                "indicatorType": "line",
+                "style": {},
+                "lineTo": {
+                    "type": "data-expr",
+                    "expr": "datum.price == 800 && datum.year_date == 2004"
+                }
+            },
+            "text": {
+                "text": "upward trend",
+                "style": {},
+                "position": "upperMiddle"
+            }
+        }
+    ]
+}

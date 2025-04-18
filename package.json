@@ -1,0 +1,8 @@
+{
+  "name": "vega-lite-annotation",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ]
+}
+

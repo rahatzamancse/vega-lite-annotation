@@ -1,0 +1,28 @@
+{
+  "name": "vega-lite-annotation-library",
+  "version": "0.0.1",
+  "description": "A library to convert Vega-Lite schema with custom annotations to Vega schema",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts",
+    "lint": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@changesets/cli": "^2.29.2",
+    "@types/d3-path": "^3.1.1",
+    "@types/d3-shape": "^3.1.7",
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "d3-path": "^3.1.0",
+    "d3-shape": "^3.2.0",
+    "vega": "^6.1.2",
+    "vega-lite": "^6.1.0"
+  }
+}

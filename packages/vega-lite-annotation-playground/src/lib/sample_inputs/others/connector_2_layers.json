@@ -1,0 +1,125 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "description": "A simple bar chart with embedded data.",
+    "data": {
+        "name": "raw",
+        "values": [
+            {
+                "a": "A",
+                "b": 28
+            },
+            {
+                "a": "B",
+                "b": 55
+            },
+            {
+                "a": "C",
+                "b": 43
+            },
+            {
+                "a": "D",
+                "b": 91
+            },
+            {
+                "a": "E",
+                "b": 81
+            },
+            {
+                "a": "F",
+                "b": 53
+            },
+            {
+                "a": "G",
+                "b": 19
+            },
+            {
+                "a": "H",
+                "b": 87
+            },
+            {
+                "a": "I",
+                "b": 52
+            }
+        ]
+    },
+    "layer": [
+        {
+            "mark": "point",
+            "encoding": {
+                "x": {
+                    "field": "a",
+                    "type": "nominal",
+                    "axis": {
+                        "labelAngle": 0
+                    }
+                },
+                "y": {
+                    "field": "b",
+                    "type": "quantitative"
+                }
+            }
+        },
+        {
+            "mark": {
+                "type": "text",
+                "dy": -10
+            },
+            "encoding": {
+                "x": {
+                    "field": "a",
+                    "type": "nominal"
+                },
+                "y": {
+                    "field": "b",
+                    "type": "quantitative"
+                },
+                "text": {
+                    "field": "label",
+                    "type": "nominal"
+                }
+            },
+            "transform": [
+                {
+                    "calculate": "datum.a + datum.b",
+                    "as": "label"
+                }
+            ]
+        }
+    ],
+    "annotations": [
+        {
+            "type": "connector",
+            "name": "my_connector",
+            "style": "dashed",
+            "start": {
+                "position": {
+                    "space": "view",
+                    "x": 0,
+                    "y": 0
+                }
+            },
+            "end": {
+                "position": {
+                    "space": "data",
+                    "source": "raw",
+                    "transform": [
+                        {
+                            "type": "filter",
+                            "expr": "datum.a === 'D'"
+                        },
+                        {
+                            "type": "formula",
+                            "as": "x",
+                            "expr": "datum.a"
+                        },
+                        {
+                            "type": "formula",
+                            "as": "y",
+                            "expr": "datum.b"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}

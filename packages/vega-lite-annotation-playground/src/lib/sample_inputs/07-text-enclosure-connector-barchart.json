@@ -1,0 +1,140 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+    "data": {
+        "values": [
+            {
+                "category": "A",
+                "group": "x",
+                "value": 0.1
+            },
+            {
+                "category": "A",
+                "group": "y",
+                "value": 0.6
+            },
+            {
+                "category": "A",
+                "group": "z",
+                "value": 0.9
+            },
+            {
+                "category": "B",
+                "group": "x",
+                "value": 0.7
+            },
+            {
+                "category": "B",
+                "group": "y",
+                "value": 0.2
+            },
+            {
+                "category": "B",
+                "group": "z",
+                "value": 1.1
+            },
+            {
+                "category": "C",
+                "group": "x",
+                "value": 0.6
+            },
+            {
+                "category": "C",
+                "group": "y",
+                "value": 0.1
+            },
+            {
+                "category": "C",
+                "group": "z",
+                "value": 0.2
+            }
+        ]
+    },
+    "mark": "bar",
+    "encoding": {
+        "x": {
+            "field": "category"
+        },
+        "y": {
+            "field": "value",
+            "type": "quantitative"
+        },
+        "xOffset": {
+            "field": "group"
+        },
+        "color": {
+            "field": "group"
+        }
+    },
+    "annotations": [
+        {
+            "target": {
+                "type": "pixel-space",
+                "x": 170,
+                "y": 20
+            },
+            "text": {
+                "text": "Pixel Space",
+                "position": {
+                    "type": "pixel-space",
+                    "x": 200,
+                    "y": -20
+                },
+                "dy": -4
+            },
+            "enclosure": {
+                "shape": {
+                    "type": "rect",
+                    "width": 60,
+                    "height": 100
+                }
+            },
+            "connector": {
+                "curve": "linear"
+            }
+        },
+        {
+            "target": {
+                "type": "data-index",
+                "indices": [
+                    1,
+                    2
+                ]
+            },
+            "text": {
+                "text": "Data Index",
+                "position": {
+                    "type": "pixel-space",
+                    "x": -40,
+                    "y": 40
+                },
+                "dy": -4,
+                "style": {
+                    "angle": -90
+                }
+            },
+            "enclosure": {
+                "padding": 10
+            },
+            "connector": {}
+        },
+        {
+            "target": {
+                "type": "data-expr",
+                "expr": "datum.category === 'C'"
+            },
+            "text": {
+                "text": "Data Expr",
+                "position": {
+                    "type": "pixel-space",
+                    "x": 60,
+                    "y": -20
+                },
+                "dy": -4
+            },
+            "enclosure": {},
+            "connector": {
+                "curve": "basis"
+            }
+        }
+    ]
+}
