@@ -349,7 +349,7 @@
 		}}
 			>Help</button
 		>
-		<button class="settings-button" onclick={() => (settingsOpen = !settingsOpen)}>Settings</button>
+		<!-- <button class="settings-button" onclick={() => (settingsOpen = !settingsOpen)}>Settings</button> -->
 	</div>
 </div>
 
@@ -429,7 +429,7 @@
 					</div>
 				</TabGroup>
 			</Pane>
-			<Pane>
+			<Pane size={30}>
 				<TabGroup tabs={[{ title: 'Vega Editor' }, { title: 'Extended Vega-Lite Spec' }]} tabChange={(index) => rightPaneActiveTabIndex = index}>
 					<div class="editor-wrapper tab-content" class:hidden={rightPaneActiveTabIndex !== 0}>
 						<div class="vega-annotation-editor" bind:this={vegaEditorContainer}></div>
@@ -456,10 +456,13 @@
 					<div class="visualization-container tab-content" class:hidden={bottomPaneActiveTabIndex !== 0} bind:this={vlVisualizationContainer}></div>
 				</TabGroup>
 			</Pane>
-			<Pane>
-				<TabGroup tabs={[{ title: 'Log' }, { title: 'Data' }]} tabChange={(index) => bottomRightPaneActiveTabIndex = index}>
+			<Pane size={20}>
+				<TabGroup tabs={[
+					{ title: 'Log' },
+					// { title: 'Data' }
+				]} tabChange={(index) => bottomRightPaneActiveTabIndex = index}>
 					<div class="log-container tab-content" class:hidden={bottomRightPaneActiveTabIndex !== 0} bind:this={vlLogContainer}><p>Logs</p></div>
-					<div class="data-container tab-content" class:hidden={bottomRightPaneActiveTabIndex !== 1} bind:this={vegaDataContainer}><p>Data</p></div>
+					<!-- <div class="data-container tab-content" class:hidden={bottomRightPaneActiveTabIndex !== 1} bind:this={vegaDataContainer}><p>Data</p></div> -->
 				</TabGroup>
 			</Pane>
 		</Splitpanes>
