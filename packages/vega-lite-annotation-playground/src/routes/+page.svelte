@@ -111,6 +111,8 @@
 			]
 		},
 	]
+	
+	const DEFAULT_EXAMPLE = '07-text-enclosure-connector-scatterplot';
 
 
 	let vlAnnotationEditor: Monaco.editor.IStandaloneCodeEditor = $state()!;
@@ -192,7 +194,7 @@
 		});
 
 		// Load the first example
-		onLoadJson(preloadedJsons[0]);
+		onLoadJson(preloadedJsons.find(json => json.filename === DEFAULT_EXAMPLE)!);
 		vegaSpec = await VLAnnotation.vlaToV(JSON.parse(vlAnnotationEditor.getValue()));
 		renderVega(vegaSpec, vlVisualizationContainer);
 	});
@@ -667,15 +669,18 @@
 	}
 
 	.examples-container h2 {
-		margin: 0 0 1rem 0;
+		margin: 0 0 0.5rem 0;
 		font-size: 1.2rem;
 		color: #333;
+		padding-bottom: 0.5rem;
+		border-bottom: 1px solid #ddd;
 	}
 
 	.examples-grid {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
 		gap: 1rem;
+		margin-bottom: 2rem;
 	}
 
 	.example-item {
@@ -685,26 +690,30 @@
 		align-items: center;
 		gap: 0.5rem;
 		padding: 0.5rem;
-		border: 1px solid #ddd;
+		border: none;
 		border-radius: 4px;
 		transition: all 0.2s ease;
 	}
 
 	.example-item:hover {
 		background: #f8f8f8;
-		border-color: #0066cc;
 	}
 
 	.example-item img {
-		width: 100%;
-		height: auto;
+		width: 140px;
+		height: 100px;
+		object-fit: contain;
 		border-radius: 2px;
+		margin-bottom: 0.5rem;
+		padding-bottom: 0.5rem;
+		border-bottom: 1px solid #eee;
 	}
 
 	.example-label {
 		font-size: 0.9rem;
 		color: #333;
 		text-align: center;
+		width: 100%;
 	}
 
 	.editor-container {

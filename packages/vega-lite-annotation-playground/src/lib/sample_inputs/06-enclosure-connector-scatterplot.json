@@ -1,7 +1,7 @@
 {
     "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
     "description": "A scatterplot showing body mass and flipper lengths of penguins.",
-    "name": "Scatterplot",
+    "name": "Scatterplot with Enclosure and Connector Ensemble Annotations",
     "data": {
         "url": "data/penguins.json"
     },

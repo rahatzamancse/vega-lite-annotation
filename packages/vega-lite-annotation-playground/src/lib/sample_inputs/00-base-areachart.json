@@ -1,5 +1,6 @@
 {
     "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+    "name": "Area Chart",
     "description": "Google's stock price over time.",
     "data": {
         "url": "data/stocks.csv"
