@@ -8,7 +8,7 @@
 	import TabGroup from '$lib/components/TabGroup.svelte';
 	
 	// Library import
-	import * as VLAnnotation from 'vl-annotation';
+	import * as VLAnnotation from 'vega-lite-annotation-library';
 
 	// load npm diff
 	import * as Diff from 'diff';
