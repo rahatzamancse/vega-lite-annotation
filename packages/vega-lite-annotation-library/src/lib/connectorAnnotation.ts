@@ -1,10 +1,9 @@
 import { ConnectorData, EnclosureData, TextData, VLANormalizedSpec } from "./vlAnnotationTypes";
-
-import { ConnectorAnnotation, FixedPosition, RootAnnotation } from "./spec";
+import { ConnectorAnnotation, FixedPosition, RootAnnotation, Anchor2D, CurveObject, ArrowStyle } from "./spec";
 import { VLATopLevel } from "./vlAnnotationTypes";
 import * as vega from 'vega';
 import { getMarkBoundingBoxFromInternalData } from "./extract-sceneGraph";
-import { getScaleNames } from "./utils";
+import { getScaleNames, calculateAnchorPosition } from "./utils";
 import { 
     line, 
     curveBasis, 
@@ -97,11 +96,57 @@ function createConnectorData(connectorMark: vega.PathMark | vega.PathMark[]): Co
     }
 }
 
-function createCurvedPath(fromX: number, fromY: number, toX: number, toY: number, curveType?: string): string {
-    // Default to linear if no curve type is specified
-    const curveFunction = curveType && curveType in curveTypes 
-        ? curveTypes[curveType as keyof typeof curveTypes]
-        : curveLinear;
+function createCurvedPath(
+    fromX: number, 
+    fromY: number, 
+    toX: number, 
+    toY: number, 
+    curve?: string | CurveObject, 
+    curveDirection: 'clockwise' | 'counterclockwise' | 'auto' = 'auto', 
+    curveTension: number = 0.5
+): string {
+    // Extract curve type and specific parameters
+    let curveType: string | undefined;
+    let curveParams: Record<string, any> = {};
+    
+    if (typeof curve === 'string') {
+        curveType = curve;
+    } else if (curve && typeof curve === 'object') {
+        curveType = curve.type;
+        
+        // Check for common properties
+        if ('direction' in curve) {
+            curveDirection = curve.direction || 'auto';
+        }
+        
+        if ('tension' in curve) {
+            curveTension = curve.tension !== undefined ? curve.tension : 0.5;
+        }
+        
+        // Store specific curve parameters based on the curve type
+        if (curveType === 'cardinal' && 'tension' in curve) {
+            curveParams.tension = curve.tension;
+        } else if (curveType === 'catmull-rom' && 'alpha' in curve) {
+            curveParams.alpha = curve.alpha;
+        } else if (curveType === 'step' && 'align' in curve) {
+            curveParams.align = curve.align;
+        }
+    }
+    
+    // Get the appropriate curve function
+    let curveFunction;
+    if (curveType && curveType in curveTypes) {
+        curveFunction = curveTypes[curveType as keyof typeof curveTypes];
+        
+        // Apply specific parameters to curve functions that support them
+        if (curveType === 'cardinal' && 'tension' in curveParams) {
+            curveFunction = curveCardinal.tension(curveParams.tension);
+        } else if (curveType === 'catmull-rom' && 'alpha' in curveParams) {
+            curveFunction = curveCatmullRom.alpha(curveParams.alpha);
+        }
+    } else {
+        curveFunction = curveLinear; // Default
+    }
     
     // For most curve types, we need at least 3 points to see the effect
     // Create a control point between the start and end points
@@ -113,6 +158,15 @@ function createCurvedPath(fromX: number, fromY: number, toX: number, toY: number
     }
     // For step curves, two points are sufficient
     else if (curveType?.startsWith('step')) {
+        // Handle different step alignments
+        if (curveType === 'step' && 'align' in curveParams) {
+            if (curveParams.align === 'before') {
+                curveFunction = curveStepBefore;
+            } else if (curveParams.align === 'after') {
+                curveFunction = curveStepAfter;
+            }
+            // 'center' is the default for curveStep
+        }
         points = [[fromX, fromY], [toX, toY]];
     } 
     // For other curves, add a control point for better curve visualization
@@ -121,18 +175,28 @@ function createCurvedPath(fromX: number, fromY: number, toX: number, toY: number
         const midX = (fromX + toX) / 2;
         const midY = (fromY + toY) / 2;
         
-        // Add some variation to the midpoint based on the distance
+        // Extract distance and direction
         const dx = toX - fromX;
         const dy = toY - fromY;
         const distance = Math.sqrt(dx*dx + dy*dy);
         
-        // Create a perpendicular offset for the control point
-        const perpX = -dy / distance * distance * 0.2;
-        const perpY = dx / distance * distance * 0.2;
+        // Scale the offset based on curveTension
+        const offsetScale = distance * 0.2 * curveTension;
+        
+        // Calculate perpendicular offsets
+        let perpX = -dy / distance * offsetScale;
+        let perpY = dx / distance * offsetScale;
+        
+        // Apply curve direction
+        if (curveDirection === 'clockwise' || 
+           (curveDirection === 'auto' && (dx * dy > 0))) {
+            perpX = -perpX;
+            perpY = -perpY;
+        }
         
         points = [
             [fromX, fromY],
-            [midX + perpX, midY + perpY], // Control point offset from straight line
+            [midX + perpX, midY + perpY], // Control point with direction and tension control
             [toX, toY]
         ];
     }
@@ -144,7 +208,7 @@ function createCurvedPath(fromX: number, fromY: number, toX: number, toY: number
     return lineGenerator(points) || '';
 }
 
-function createConnectorMarkFromSpace(connectorAnnotation: ConnectorAnnotation, vega_spec: vega.Spec, start: FixedPosition, end: FixedPosition, rootAnnotation: RootAnnotation, id?: string): vega.PathMark {
+function createConnectorMarkFromSpace(connectorAnnotation: ConnectorAnnotation, vega_spec: vega.Spec, start: FixedPosition, end: FixedPosition, rootAnnotation: RootAnnotation, id?: string): { connectorMark: vega.PathMark, arrowMarks: vega.SymbolMark[] } {
     // usually:
         // start: connect_to
         // end: target
@@ -190,7 +254,20 @@ function createConnectorMarkFromSpace(connectorAnnotation: ConnectorAnnotation, 
 
     // Create path data for a line from (x,y) to (x2,y2) using d3-shape's curve functions
     const { x: offsetX, y: offsetY, x2: offsetX2, y2: offsetY2 } = applyConnectorOffset(x, y, x2, y2, connectorAnnotation.dx, connectorAnnotation.dy, connectorAnnotation.dx2, connectorAnnotation.dy2);
-    const pathData = createCurvedPath(offsetX, offsetY, offsetX2, offsetY2, connectorAnnotation.curve);
+    
+    // Extract curve direction and tension from global settings (will be overridden by curve object if present)
+    let curveDirection = connectorAnnotation.curveDirection || 'auto';
+    let curveTension = connectorAnnotation.curveTension !== undefined ? connectorAnnotation.curveTension : 0.5;
+    
+    const pathData = createCurvedPath(
+        offsetX, 
+        offsetY, 
+        offsetX2, 
+        offsetY2, 
+        connectorAnnotation.curve,
+        curveDirection,
+        curveTension
+    );
     
     const connectorMark: vega.PathMark = {
         name: id || connectorAnnotation.id,
@@ -202,9 +279,81 @@ function createConnectorMarkFromSpace(connectorAnnotation: ConnectorAnnotation, 
         }
     };
     
-    return connectorMark;
+    // Create arrow marks if requested
+    const arrowMarks: vega.SymbolMark[] = [];
+    
+    // Calculate the angle for arrows based on the start and end points
+    const startAngle = calculateAngle(offsetX, offsetY, offsetX2, offsetY2);
+    const endAngle = calculateAngle(offsetX2, offsetY2, offsetX, offsetY) + 180; // Add 180 degrees to reverse direction
+    
+    // Add start arrow if requested
+    if (connectorAnnotation.startArrow) {
+        const startArrowMark = createArrowMark(
+            offsetX, 
+            offsetY, 
+            startAngle, 
+            `${id || connectorAnnotation.id}_startArrow`,
+            connectorAnnotation.startArrowStyle
+        );
+        arrowMarks.push(startArrowMark);
+    }
+    
+    // Add end arrow if requested
+    if (connectorAnnotation.endArrow) {
+        const endArrowMark = createArrowMark(
+            offsetX2, 
+            offsetY2, 
+            endAngle, 
+            `${id || connectorAnnotation.id}_endArrow`,
+            connectorAnnotation.endArrowStyle
+        );
+        arrowMarks.push(endArrowMark);
+    }
+    
+    return { connectorMark, arrowMarks };
 }
 
+// Calculate angle between two points in degrees
+function calculateAngle(x1: number, y1: number, x2: number, y2: number): number {
+    return Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+}
+
+// Create arrow symbol mark
+function createArrowMark(x: number, y: number, angle: number, id: string, style?: ArrowStyle): vega.SymbolMark {
+    const defaultStyle: ArrowStyle = {
+        fill: "black",
+        size: 150,
+        shape: "triangle-right",
+        rotationAdjust: 0,
+        opacity: 1,
+        stroke: undefined,
+        strokeWidth: 1
+    };
+    
+    // Merge default with provided style
+    const arrowStyle = { ...defaultStyle, ...style };
+    
+    // Apply rotation adjustment
+    const finalAngle = angle + (arrowStyle.rotationAdjust || 0);
+    
+    return {
+        type: "symbol",
+        name: id,
+        encode: {
+            enter: {
+                x: { value: x },
+                y: { value: y },
+                shape: { value: arrowStyle.shape || "triangle-right" },
+                size: { value: arrowStyle.size || 150 },
+                fill: { value: arrowStyle.fill || "black" },
+                angle: { value: finalAngle },
+                opacity: { value: arrowStyle.opacity || 1 },
+                stroke: arrowStyle.stroke ? { value: arrowStyle.stroke } : undefined,
+                strokeWidth: arrowStyle.strokeWidth ? { value: arrowStyle.strokeWidth } : undefined
+            }
+        }
+    };
+}
 
 export async function addConnectorAnnotation_unit(annotation: RootAnnotation, vega_spec: vega.Spec, vlna_spec: VLATopLevel<VLANormalizedSpec>, enclosureData: EnclosureData | null, textData: TextData | TextData[] | null): Promise<ConnectorData | ConnectorData[] | null> {
     // Connectors are mostly used for ensemble, then it will connect in precedence of
@@ -239,8 +388,9 @@ export async function addConnectorAnnotation_unit(annotation: RootAnnotation, ve
             
             // Extract positions from mark data
             markData.forEach(d => {
-                x2.push('width' in d ? d.x + d.width/2 : ('x2' in d ? d.x2 as number : d.x))
-                y2.push('height' in d ? d.y + d.height/2 : ('y2' in d ? d.y2 as number : d.y))
+                const {x, y} = calculateAnchorPosition(connectorAnnotation.connect_to?.position as Anchor2D || 'middleMiddle', d.bounds as {x1: number, y1: number, x2: number, y2: number});
+                x2.push(x)
+                y2.push(y)
             });
         }
     }
@@ -333,10 +483,12 @@ export async function addConnectorAnnotation_unit(annotation: RootAnnotation, ve
 
     // create connector marks
     const connectorMarks: vega.PathMark[] = [];
+    const arrowMarks: vega.SymbolMark[] = [];
+    
     for (let i = 0; i < x.length; i++) {
         for (let j = 0; j < x2.length; j++) {
             try {
-                const connectorMark = createConnectorMarkFromSpace(
+                const { connectorMark, arrowMarks: newArrowMarks } = createConnectorMarkFromSpace(
                     connectorAnnotation,
                     vega_spec,
                     {
@@ -354,11 +506,16 @@ export async function addConnectorAnnotation_unit(annotation: RootAnnotation, ve
                 );
                 applyConnectorStyleProperties(connectorMark, connectorAnnotation);
                 connectorMarks.push(connectorMark);
+                arrowMarks.push(...newArrowMarks);
             } catch (error) {
                 console.error("Error creating connector mark:", error);
             }
         }
     }
+    
+    // Add all marks to the vega spec
     vega_spec.marks?.push(...connectorMarks);
+    vega_spec.marks?.push(...arrowMarks);
+    
     return createConnectorData(connectorMarks);
 }

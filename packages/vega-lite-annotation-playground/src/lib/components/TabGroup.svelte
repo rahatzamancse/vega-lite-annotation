@@ -15,6 +15,11 @@
 	function switchTab(index: number) {
 		activeTabIndex = index;
 		tabChange?.(index);
+		
+		// Dispatch a resize event after tab change to help components resize
+		setTimeout(() => {
+			window.dispatchEvent(new Event('resize'));
+		}, 10);
 	}
 </script>
 
@@ -40,12 +45,14 @@
 		height: 100%;
 		display: flex;
 		flex-direction: column;
+		overflow: hidden;
 	}
 
 	.tab-headers {
 		display: flex;
 		border-bottom: 1px solid #ddd;
 		background: #f5f5f5;
+		flex-shrink: 0;
 	}
 
 	.tab-header {
@@ -70,6 +77,10 @@
 
 	.tab-content {
 		flex: 1;
-		overflow: hidden;
+		overflow: auto;
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		min-height: 0;
 	}
 </style> 

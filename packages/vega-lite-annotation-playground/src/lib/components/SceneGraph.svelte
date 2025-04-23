@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onMount, onDestroy } from 'svelte';
+    import { onMount } from 'svelte';
     import * as d3 from 'd3';
     import * as vega from 'vega';
 
@@ -21,67 +21,24 @@
     const { sceneGraph }: { sceneGraph: vega.Scene } = $props();
 
     let container: HTMLElement;
-    let resizeObserver: ResizeObserver;
     
     onMount(() => {
-        console.log('[SceneGraph] Component mounted, container:', container);
-        console.log('[SceneGraph] sceneGraph data:', sceneGraph);
-        
-        // Set explicit dimensions on the container
-        if (container) {
-            container.style.width = "100%";
-            container.style.height = "100%";
-            container.style.minHeight = "500px";
-        }
-        
-        // Create a ResizeObserver to detect when the container has actual dimensions
-        resizeObserver = new ResizeObserver(entries => {
-            const entry = entries[0];
-            const { width, height } = entry.contentRect;
-            
-            console.log('[SceneGraph] ResizeObserver fired:', width, height);
-            
-            if (width > 0 && height > 0 && sceneGraph) {
-                // Container has actual dimensions now, render the scene graph
-                renderSceneGraph(sceneGraph);
-            } else if (sceneGraph) {
-                // If still no dimensions, force with explicit fixed dimensions
-                renderSceneGraph(sceneGraph);
-            }
-        });
-        
-        // Start observing the container
-        resizeObserver.observe(container);
-        
-        // Initially try to render, but ResizeObserver will handle if dimensions are 0
         if (sceneGraph && container) {
-            // Set a timeout to ensure the DOM has had time to render
-            setTimeout(() => {
-                renderSceneGraph(sceneGraph);
-            }, 100);
+            renderSceneGraph(sceneGraph);
         }
     });
     
-    onDestroy(() => {
-        // Clean up the observer when the component is destroyed
-        if (resizeObserver) {
-            resizeObserver.disconnect();
-        }
-    });
-
     // Watch for changes in the scene graph
     $effect(() => {
-        console.log('[SceneGraph] Effect triggered, container:', container);
-        console.log('[SceneGraph] Effect triggered, sceneGraph:', sceneGraph);
-        
-        if (container && sceneGraph && container.clientWidth > 0 && container.clientHeight > 0) {
+        if (container && sceneGraph) {
             renderSceneGraph(sceneGraph);
         }
     });
 
     const renderSceneGraph = (sceneGraph: vega.Scene) => {
+    
+        console.log('[SceneGraph] renderSceneGraph', sceneGraph);
         try {
-            console.log("[SceneGraph] renderSceneGraph", sceneGraph);
             // Clear previous content
             container.innerHTML = '';
             
@@ -94,9 +51,6 @@
             
             const width = Math.max(containerWidth - margin.left - margin.right, 300);
             const height = Math.max(containerHeight - margin.top - margin.bottom, 300);
-            
-            console.log('[SceneGraph] Container dimensions:', containerWidth, containerHeight);
-            console.log('[SceneGraph] Using dimensions:', width, height);
             
             // Create the SVG with explicit dimensions
             const svg = d3.select(container)
@@ -127,6 +81,9 @@
                 const rootWithLayout = treeLayout(root as any) as any;
                 const nodes = rootWithLayout.descendants() as CustomNode[];
                 const links = rootWithLayout.links();
+                
+                console.log('[SceneGraph] nodes', nodes);
+                console.log('[SceneGraph] links', links);
                 
                 // Normalize for fixed-depth
                 nodes.forEach(d => {
@@ -378,14 +335,5 @@
         fill: none;
         stroke: #ccc;
         stroke-width: 2px;
-    }
-    
-    .error-message {
-        color: #e74c3c;
-        padding: 1rem;
-        border: 1px solid #e74c3c;
-        border-radius: 4px;
-        margin: 1rem;
-        background-color: rgba(231, 76, 60, 0.1);
     }
 </style> 

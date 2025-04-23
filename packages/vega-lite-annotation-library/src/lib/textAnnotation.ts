@@ -1,30 +1,30 @@
-import type {TextAnnotation, RootAnnotation, AnnotationMarker, FixedPosition, DataPointMarker} from './spec'
+import type {TextAnnotation, RootAnnotation, FixedPosition, DataPointMarker, Anchor2D} from './spec'
 import * as vega from 'vega'
 import type {VLATopLevel, VLANormalizedSpec, EnclosureData, TextData} from './vlAnnotationTypes'
 import { getMarkBoundingBoxFromInternalData } from './extract-sceneGraph'
-import { getScaleNames } from './utils'
+import { getScaleNames, calculateAnchorPosition } from './utils'
 
 function applyTextStyleProperties(textMark: vega.TextMark, textAnnotation: TextAnnotation) {
     if (!textMark.encode) textMark.encode = { update: {} };
     if (!textMark.encode.update) textMark.encode.update = {};
 
-    textMark.encode.update.align = { value: textAnnotation.style?.align || 'center' }
-    textMark.encode.update.angle = { value: textAnnotation.style?.angle || 0 }
-    textMark.encode.update.baseline = { value: textAnnotation.style?.baseline || 'middle' }
-    textMark.encode.update.dir = { value: textAnnotation.style?.dir || 'ltr' }
-    textMark.encode.update.dx = { value: textAnnotation.dx || 0 }
-    textMark.encode.update.dy = { value: textAnnotation.dy || 0 }
-    textMark.encode.update.ellipsis = { value: textAnnotation.style?.ellipsis || '...' }
-    textMark.encode.update.font = { value: textAnnotation.style?.font || 'Helvetica Neue' }
-    textMark.encode.update.fontSize = { value: textAnnotation.style?.fontSize || 12 }
-    textMark.encode.update.fontWeight = { value: textAnnotation.style?.fontWeight || 'normal' }
-    textMark.encode.update.fontStyle = { value: textAnnotation.style?.fontStyle || 'normal' }
-    textMark.encode.update.lineBreak = { value: textAnnotation.style?.lineBreak || '\n' }
-    textMark.encode.update.lineHeight = { value: textAnnotation.style?.lineHeight || 1.2 }
-    textMark.encode.update.limit = { value: textAnnotation.style?.limit || 0 }
-    textMark.encode.update.radius = { value: textAnnotation.style?.radius || 0 }
+    textMark.encode.update.align = { value: textAnnotation.style?.align || null }
+    textMark.encode.update.angle = { value: textAnnotation.style?.angle || null }
+    textMark.encode.update.baseline = { value: textAnnotation.style?.baseline || null }
+    textMark.encode.update.dir = { value: textAnnotation.style?.dir || null }
+    textMark.encode.update.dx = { value: textAnnotation.dx || null }
+    textMark.encode.update.dy = { value: textAnnotation.dy || null }
+    textMark.encode.update.ellipsis = { value: textAnnotation.style?.ellipsis || null }
+    textMark.encode.update.font = { value: textAnnotation.style?.font || null }
+    textMark.encode.update.fontSize = { value: textAnnotation.style?.fontSize || null }
+    textMark.encode.update.fontWeight = { value: textAnnotation.style?.fontWeight || null }
+    textMark.encode.update.fontStyle = { value: textAnnotation.style?.fontStyle || null }
+    textMark.encode.update.lineBreak = { value: textAnnotation.style?.lineBreak || null }
+    textMark.encode.update.lineHeight = { value: textAnnotation.style?.lineHeight || null }
+    textMark.encode.update.limit = { value: textAnnotation.style?.limit || null }
+    textMark.encode.update.radius = { value: textAnnotation.style?.radius || null }
     textMark.encode.update.text = { value: textAnnotation.text }
-    textMark.encode.update.theta = { value: textAnnotation.style?.theta || 0 }
+    textMark.encode.update.theta = { value: textAnnotation.style?.theta || null }
 }
 
 function applyTextOffset(textMark: vega.TextMark, textAnnotation: TextAnnotation) {
@@ -93,36 +93,6 @@ function createTextMarkFromSpace(textAnnotation: TextAnnotation, vega_spec: vega
     return textMark;
 }
 
-function calculateTextPosition(textAnnotation: TextAnnotation, boundingBox: {x1: number, y1: number, x2: number, y2: number}): {x: number, y: number} {
-    if (textAnnotation.position === 'start')
-        return {x: boundingBox.x1, y: boundingBox.y1};        
-    else if (textAnnotation.position === 'end')
-        return {x: boundingBox.x2, y: boundingBox.y2};
-    else if (textAnnotation.position === 'middle')
-        return {x: (boundingBox.x2 + boundingBox.x1) / 2, y: (boundingBox.y2 + boundingBox.y1) / 2};
-    else if (textAnnotation.position === 'upperLeft')
-        return {x: boundingBox.x1, y: boundingBox.y1};
-    else if (textAnnotation.position === 'upperRight')
-        return {x: boundingBox.x2, y: boundingBox.y1};
-    else if (textAnnotation.position === 'lowerLeft')
-        return {x: boundingBox.x1, y: boundingBox.y2};
-    else if (textAnnotation.position === 'middleLeft')
-        return {x: boundingBox.x1, y: (boundingBox.y2 + boundingBox.y1) / 2};
-    else if (textAnnotation.position === 'middleRight')
-        return {x: boundingBox.x2, y: (boundingBox.y2 + boundingBox.y1) / 2};
-    else if (textAnnotation.position === 'upperMiddle')
-        return {x: (boundingBox.x2 + boundingBox.x1) / 2, y: boundingBox.y1};
-    else if (textAnnotation.position === 'lowerMiddle')
-        return {x: (boundingBox.x2 + boundingBox.x1) / 2, y: boundingBox.y2};
-    else if (textAnnotation.position === 'lowerRight')
-        return {x: boundingBox.x2, y: boundingBox.y2};
-    else if (textAnnotation.position === 'middleMiddle')
-        return {x: (boundingBox.x2 + boundingBox.x1) / 2, y: (boundingBox.y2 + boundingBox.y1) / 2};
-    else {
-        return {x: (boundingBox.x2 + boundingBox.x1) / 2, y: (boundingBox.y2 + boundingBox.y1) / 2};
-    }
-}
-
 export async function addTextAnnotation_unit(annotation: RootAnnotation, vega_spec: vega.Spec, vlna_spec: VLATopLevel<VLANormalizedSpec>, enclosureData: EnclosureData | null): Promise<TextData | TextData[]> {
     if (!vega_spec.marks) vega_spec.marks = [];
     
@@ -144,11 +114,17 @@ export async function addTextAnnotation_unit(annotation: RootAnnotation, vega_sp
         if (textAnnotation.position === 'start' || textAnnotation.position === 'end' || textAnnotation.position === 'middle')
             throw new Error("Used 1D anchor for text positioning around enclosure");
         
-        const {x, y} = calculateTextPosition(textAnnotation, { x1: enclosureData.x, y1: enclosureData.y, x2: enclosureData.x2, y2: enclosureData.y2 });
+        let x: number, y: number;
+        if (typeof textAnnotation.position === 'string') {
+            const ret = calculateAnchorPosition(textAnnotation.position as Anchor2D || 'upperMiddle', { x1: enclosureData.x, y1: enclosureData.y, x2: enclosureData.x2, y2: enclosureData.y2 });
+            x = ret.x;
+            y = ret.y;
+        }
         
         textMark = createTextMarkFromSpace(textAnnotation, vega_spec, {
             type: 'pixel-space',
-            x, y
+            x: x!,
+            y: y!
         });
     }
     // Handle target-based text
@@ -166,7 +142,7 @@ export async function addTextAnnotation_unit(annotation: RootAnnotation, vega_sp
                 textMark = [];
                 markData.forEach((d, i) => {
                     if ('bounds' in d) {
-                        const {x, y} = calculateTextPosition(textAnnotation, d.bounds as {x1: number, y1: number, x2: number, y2: number});
+                        const {x, y} = calculateAnchorPosition(textAnnotation.position as Anchor2D || 'upperMiddle', d.bounds as {x1: number, y1: number, x2: number, y2: number});
                         (textMark as vega.TextMark[]).push(createTextMarkFromSpace(
                             textAnnotation,
                             vega_spec,

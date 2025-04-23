@@ -6,6 +6,8 @@
 	import Settings from '$lib/components/Settings.svelte';
 	import SvelteMarkdown from 'svelte-markdown';
 	import TabGroup from '$lib/components/TabGroup.svelte';
+	import SceneGraph from '$lib/components/SceneGraph.svelte';
+	import DataViewer from '$lib/components/DataViewer.svelte';
 	
 	// Library import
 	import * as VLAnnotation from 'vega-lite-annotation-library';
@@ -16,8 +18,9 @@
 	import LZString from 'lz-string';
 
 	import * as vega from 'vega';
+
 	const preloadedJsons = Object.entries(
-		import.meta.glob<VLAnnotation.VLATopLevelSpec>('$lib/sample_inputs/*.json', {
+		import.meta.glob<VLAnnotation.VLATopLevelSpec>(['$lib/sample_inputs/*.json', '$lib/sample_inputs/*.json5'], {
 			eager: true,
 			import: 'default'
 		})
@@ -31,88 +34,94 @@
 	
 	const inputExampleGroups = [
 		{
+			name: "Real Work Examples",
+			examples: [
+				{ file: "realexamples-hospitalizations", name: "COVID Hospitalizations" },
+			]
+		},
+		{
 			name: "Base Visualizations",
 			examples: [
-				"00-base-scatterplot",
-				"00-base-barchart",
-				"00-base-linechart",
-				"00-base-piechart",
-				"00-base-areachart",
+				{ file: "00-base-scatterplot", name: "Scatterplot" },
+				{ file: "00-base-barchart", name: "Barchart" },
+				{ file: "00-base-linechart", name: "Linechart" },
+				{ file: "00-base-piechart", name: "Piechart" },
+				{ file: "00-base-areachart", name: "Areachart" },
 			]
 		},
 		{
 			name: "Text Annotations",
 			examples: [
-				"01-text-scatterplot",
-				"01-text-barchart",
-				"01-text-linechart",
-				"01-text-piechart",
-				"01-text-areachart"
+				{ file: "01-text-scatterplot", name: "Scatterplot with text annotations" },
+				{ file: "01-text-barchart", name: "Barchart with text annotations" },
+				{ file: "01-text-linechart", name: "Linechart with text annotations" },
+				{ file: "01-text-piechart", name: "Piechart with text annotations" },
+				{ file: "01-text-areachart", name: "Areachart with text annotations" },
 			]
 		},
 		{
 			name: 'Enclosure Annotations',
 			examples: [
-				"02-enclosure-scatterplot",
-				"02-enclosure-barchart",
-				"02-enclosure-linechart",
-				"02-enclosure-piechart",
-				"02-enclosure-areachart"
+				{ file: "02-enclosure-scatterplot", name: "Scatterplot with enclosure annotations" },
+				{ file: "02-enclosure-barchart", name: "Barchart with enclosure annotations" },
+				{ file: "02-enclosure-linechart", name: "Linechart with enclosure annotations" },
+				{ file: "02-enclosure-piechart", name: "Piechart with enclosure annotations" },
+				{ file: "02-enclosure-areachart", name: "Areachart with enclosure annotations" },
 			]
 		},
 		{
 			name: 'Connector Annotations',
 			examples: [
-				"03-connector-scatterplot",
-				"03-connector-barchart",
-				"03-connector-linechart",
-				"03-connector-piechart",
-				"03-connector-areachart"
+				{ file: "03-connector-scatterplot", name: "Scatterplot with connector annotations" },
+				{ file: "03-connector-barchart", name: "Barchart with connector annotations" },
+				{ file: "03-connector-linechart", name: "Linechart with connector annotations" },
+				{ file: "03-connector-piechart", name: "Piechart with connector annotations" },
+				{ file: "03-connector-areachart", name: "Areachart with connector annotations" },
 			]
 		},
 		{
 			name: 'Text Connector Ensemble Annotations',
 			examples: [
-				"04-text-connector-scatterplot",
-				"04-text-connector-barchart",
-				"04-text-connector-linechart",
-				"04-text-connector-piechart",
-				"04-text-connector-areachart"
+				{ file: "04-text-connector-scatterplot", name: "Scatterplot with text connector annotations" },
+				{ file: "04-text-connector-barchart", name: "Barchart with text connector annotations" },
+				{ file: "04-text-connector-linechart", name: "Linechart with text connector annotations" },
+				{ file: "04-text-connector-piechart", name: "Piechart with text connector annotations" },
+				{ file: "04-text-connector-areachart", name: "Areachart with text connector annotations" },
 			]
 		},
 		{
 			name: 'Text Enclosure Ensemble Annotations',
 			examples: [
-				"05-text-enclosure-scatterplot",
-				"05-text-enclosure-barchart",
-				"05-text-enclosure-linechart",
-				"05-text-enclosure-piechart",
-				"05-text-enclosure-areachart"
+				{ file: "05-text-enclosure-scatterplot", name: "Scatterplot with text enclosure annotations" },
+				{ file: "05-text-enclosure-barchart", name: "Barchart with text enclosure annotations" },
+				{ file: "05-text-enclosure-linechart", name: "Linechart with text enclosure annotations" },
+				{ file: "05-text-enclosure-piechart", name: "Piechart with text enclosure annotations" },
+				{ file: "05-text-enclosure-areachart", name: "Areachart with text enclosure annotations" },
 			]
 		},
 		{
 			name: 'Enclosure Connector Ensemble Annotations',
 			examples: [
-				"06-enclosure-connector-scatterplot",
-				"06-enclosure-connector-barchart",
-				"06-enclosure-connector-linechart",
-				"06-enclosure-connector-piechart",
-				"06-enclosure-connector-areachart"
+				{ file: "06-enclosure-connector-scatterplot", name: "Scatterplot with enclosure connector annotations" },
+				{ file: "06-enclosure-connector-barchart", name: "Barchart with enclosure connector annotations" },
+				{ file: "06-enclosure-connector-linechart", name: "Linechart with enclosure connector annotations" },
+				{ file: "06-enclosure-connector-piechart", name: "Piechart with enclosure connector annotations" },
+				{ file: "06-enclosure-connector-areachart", name: "Areachart with enclosure connector annotations" },
 			]
 		},
 		{
 			name: 'Text Enclosure Ensemble Connector Annotations',
 			examples: [
-				"07-text-enclosure-connector-scatterplot",
-				"07-text-enclosure-connector-barchart",
-				"07-text-enclosure-connector-linechart",
-				"07-text-enclosure-connector-piechart",
-				"07-text-enclosure-connector-areachart"
+				{ file: "07-text-enclosure-connector-scatterplot", name: "Scatterplot with text enclosure connector annotations" },
+				{ file: "07-text-enclosure-connector-barchart", name: "Barchart with text enclosure connector annotations" },
+				{ file: "07-text-enclosure-connector-linechart", name: "Linechart with text enclosure connector annotations" },
+				{ file: "07-text-enclosure-connector-piechart", name: "Piechart with text enclosure connector annotations" },
+				{ file: "07-text-enclosure-connector-areachart", name: "Areachart with text enclosure connector annotations" },
 			]
 		},
 	]
 	
-	const DEFAULT_EXAMPLE = '07-text-enclosure-connector-scatterplot';
+	const DEFAULT_EXAMPLE = 'realexamples-hospitalizations';
 
 
 	let vlAnnotationEditor: Monaco.editor.IStandaloneCodeEditor = $state()!;
@@ -123,7 +132,6 @@
 	let configEditorContainer: HTMLElement = $state()!;
 	let extendedVegaLiteEditor: Monaco.editor.IStandaloneCodeEditor = $state()!;
 	let extendedVegaLiteEditorContainer: HTMLElement = $state()!;
-	
 
 	let vlnaSpec: VLAnnotation.VLANormalizedSpec = $state({} as VLAnnotation.VLANormalizedSpec);
 	let vegaSpec: vega.Spec = $state({} as vega.Spec);
@@ -136,12 +144,8 @@
 
 	let vlVisualizationContainer: HTMLElement = $state()!;
 	let vlLogContainer: HTMLElement = $state()!;
-	let vegaDataContainer: HTMLElement = $state()!;
-
-	let vegaData: any;
-	let dataNames: string[] = [];
-	let selectedDataName: string | null = null;
-	let selectedData: any[] = [];
+	let occupancyMatrixEditorContainer: HTMLElement = $state()!;
+	let currentView: vega.View | null = $state(null);
 
 	let helpModalOpen = $state(false);
 	let helpContent = $state('');
@@ -155,14 +159,40 @@
 	let bottomPaneActiveTabIndex = $state(0);
 	let bottomRightPaneActiveTabIndex = $state(0);
 	
+	let sceneGraphData: vega.Scene | null = $state(null);
+
 	onMount(async () => {
 		// (onMount() will only be executed in the browser, which is what we want)
 		monaco = (await import('$lib/monaco')).default;
+		
+		// Configure Monaco for JSON and JSON5 support
 		monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
 			validate: true,
-			allowComments: false,
+			allowComments: true,
+			comments: 'ignore',
+			trailingCommas: 'ignore',
 			schemas: [],
 			enableSchemaRequest: true
+		});
+
+		// Register JSON5 as a language that uses JSON
+		monaco.languages.register({
+			id: 'json5',
+			extensions: ['.json5'],
+			aliases: ['JSON5', 'json5'],
+			mimetypes: ['application/json5']
+		});
+		
+		// Use JSON mode for JSON5 files
+		monaco.languages.onLanguage('json5', () => {
+			monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+				validate: true,
+				allowComments: true,
+				comments: 'ignore',
+				trailingCommas: 'ignore',
+				schemas: [],
+				enableSchemaRequest: true
+			});
 		});
 
 		const editorOptions: Monaco.editor.IStandaloneEditorConstructionOptions = {
@@ -195,8 +225,6 @@
 
 		// Load the first example
 		onLoadJson(preloadedJsons.find(json => json.filename === DEFAULT_EXAMPLE)!);
-		vegaSpec = await VLAnnotation.vlaToV(JSON.parse(vlAnnotationEditor.getValue()));
-		renderVega(vegaSpec, vlVisualizationContainer);
 	});
 
 	$effect(() => {
@@ -208,45 +236,89 @@
 		}
 	});
 
-	const renderVega = (vegaSpec: any, container: HTMLElement) => {
-		const runtime = vega.parse(vegaSpec);
-		const view = new vega.View(runtime)
-			.renderer('svg') // or 'canvas'
-			.initialize(container)
-			.run();
-
-		vegaData = view.getState({ data: vega.truthy });
-
-		// Populate data names for dropdown
-		dataNames = Object.keys(vegaData.data);
-		selectedDataName = dataNames.length > 0 ? dataNames[0] : null;
-		updateSelectedData();
+	const displayError = (error: any) => {
+		vlLogContainer.textContent = `Error: ${error.message || error}`;
 	};
-
-	const updateSelectedData = () => {
-		if (selectedDataName) {
-			selectedData = vegaData.data[selectedDataName];
-		} else {
-			selectedData = [];
-		}
-	};
-
-	const displayError = (container: HTMLElement, error: any) => {
-		container.textContent = `Error: ${error.message || error}`;
-		container.style.display = 'block';
-	};
-
-	const clearError = (container: HTMLElement) => {
-		container.textContent = '';
-		container.style.display = 'none';
-	};
+	
+	const clearLog = () => {
+		vlLogContainer.textContent = '';
+	}
+	
+	const populateOccupancyMatrix = (occupancyMatrix: boolean[][]) => {
+			// Create a more readable visualization of the occupancy matrix
+			const matrixHTML = document.createElement('div');
+			matrixHTML.className = 'occupancy-matrix-visualization';
+			
+			// Create a container for the matrix
+			const matrixContainer = document.createElement('div');
+			matrixContainer.style.fontFamily = 'monospace';
+			matrixContainer.style.lineHeight = '1';
+			matrixContainer.style.whiteSpace = 'pre';
+			
+			// Generate the matrix visualization with colors
+			const matrixContent = occupancyMatrix.map((row: boolean[]) => {
+				return row.map((cell: boolean) => 
+					cell ? '<span style="color: #e74c3c;">██</span>' : '<span style="color: #ecf0f1;">░░</span>'
+				).join('');
+			}).join('<br>');
+			
+			matrixContainer.innerHTML = matrixContent;
+			matrixHTML.appendChild(matrixContainer);
+			
+			// Add a legend
+			const legend = document.createElement('div');
+			legend.style.marginTop = '10px';
+			legend.style.display = 'flex';
+			legend.style.gap = '15px';
+			
+			const occupiedItem = document.createElement('div');
+			occupiedItem.innerHTML = '<span style="color: #e74c3c;">██</span> Occupied';
+			occupiedItem.style.display = 'flex';
+			occupiedItem.style.alignItems = 'center';
+			occupiedItem.style.gap = '5px';
+			
+			const emptyItem = document.createElement('div');
+			emptyItem.innerHTML = '<span style="color: #ecf0f1;">░░</span> Empty';
+			emptyItem.style.display = 'flex';
+			emptyItem.style.alignItems = 'center';
+			emptyItem.style.gap = '5px';
+			
+			legend.appendChild(occupiedItem);
+			legend.appendChild(emptyItem);
+			matrixHTML.appendChild(legend);
+			
+			// Add dimensions info
+			const dimensions = document.createElement('div');
+			dimensions.style.marginTop = '5px';
+			dimensions.style.fontSize = '0.8em';
+			dimensions.style.color = '#7f8c8d';
+			dimensions.textContent = `Dimensions: ${occupancyMatrix.length}×${occupancyMatrix[0]?.length || 0}`;
+			matrixHTML.appendChild(dimensions);
+			
+			occupancyMatrixEditorContainer.innerHTML = '';
+			occupancyMatrixEditorContainer.appendChild(matrixHTML);
+	}
 
 	const runButtonClicked = async () => {
 		const input = vlAnnotationEditor.getValue();
 		
-
 		try {
-			const vlaSpec = JSON.parse(input) as VLAnnotation.VLATopLevelSpec;
+			// Try to safely evaluate the input as a JavaScript object (for JSON5 support)
+			// This is safe because we're not using eval() directly
+			let vlaSpec;
+			try {
+				// First try standard JSON parse
+				vlaSpec = JSON.parse(input);
+			} catch (jsonError) {
+				// If that fails, try evaluating it as a JavaScript object (for JSON5)
+				// Use a safer approach with Function constructor
+				try {
+					vlaSpec = (new Function(`return (${input});`))();
+				} catch (jsError: any) {
+					throw new Error(`Failed to parse input: ${jsError.message}`);
+				}
+			}
+			
 			vlnaSpec = VLAnnotation.VLANormalize(vlaSpec);
 			vegaSpec = await VLAnnotation.vlaToV(vlaSpec);
 			const vegaSpecWithoutAnnotations = JSON.stringify(VLAnnotation.vlnaToV_noAnnotations(vlnaSpec), null, 2);
@@ -270,10 +342,23 @@
 				currentLine += part.count || 0;
 			});
 			decorationCollection.set(decorations);
-			renderVega(vegaSpec, vlVisualizationContainer);
-			clearError(vlLogContainer);
+			
+			// Render the visualization and store the view
+			const runtime = vega.parse(vegaSpec);
+			const view = new vega.View(runtime)
+				.renderer('svg')
+				.initialize(vlVisualizationContainer);
+				
+			await view.runAsync();
+			currentView = view;
+			
+			const occupancyMatrix = await VLAnnotation.createOccupancyMatrix(vegaSpec);
+			populateOccupancyMatrix(occupancyMatrix);
+			const sceneGraph = await VLAnnotation.vegaSpecToSceneGraph(vegaSpec);
+			sceneGraphData = sceneGraph;
+			clearLog();
 		} catch (error) {
-			displayError(vlLogContainer, error);
+			displayError(error);
 			console.error(error);
 		}
 	};
@@ -289,6 +374,19 @@
 	const onLoadJson = (json: { path: string, json: VLAnnotation.VLATopLevelSpec, name: string, image: string, filename: string }) => {
 		const data = json.json;
 		vlAnnotationEditor.setValue(JSON.stringify(data, null, 2));
+		
+		// Set the language mode based on file extension
+		const fileExtension = json.path.split('.').pop()?.toLowerCase();
+		if (fileExtension === 'json5') {
+			monaco.editor.setModelLanguage(vlAnnotationEditor.getModel()!, 'json5');
+		} else {
+			monaco.editor.setModelLanguage(vlAnnotationEditor.getModel()!, 'json');
+		}
+		
+		// Automatically run the example
+		if (autorunEnabled) {
+			runButtonClicked();
+		}
 	};
 
 	const removeAnnotations = (vlaSpec: any) => {
@@ -364,8 +462,8 @@
 		{#each inputExampleGroups as { name, examples }}
 			<h2>{name}</h2>
 			<div class="examples-grid">
-				{#each examples as example}
-					{@const json = preloadedJsons.find(json => json.filename === example)!}
+				{#each examples as { file, name }}
+					{@const json = preloadedJsons.find(json => json.filename === file)!}
 					{#if json}
 						<div 
 							class="example-item" 
@@ -381,8 +479,8 @@
 									examplesModalOpen = false;
 								}
 							}}>
-								<img src="/sample_inputs/{json.image}" alt={json.name} />
-								<span class="example-label">{json.name}</span>
+								<img src="/sample_inputs/{json.image}" alt={name} />
+								<span class="example-label">{name}</span>
 						</div>
 					{/if}
 				{/each}
@@ -459,10 +557,24 @@
 			<Pane size={20}>
 				<TabGroup tabs={[
 					{ title: 'Log' },
-					// { title: 'Data' }
-				]} tabChange={(index) => bottomRightPaneActiveTabIndex = index}>
+					{ title: 'Data' },
+					{ title: 'Occupancy Matrix' },
+					{ title: 'Scene Graph' },
+				]} tabChange={(index) => { bottomRightPaneActiveTabIndex = index }}>
 					<div class="log-container tab-content" class:hidden={bottomRightPaneActiveTabIndex !== 0} bind:this={vlLogContainer}><p>Logs</p></div>
-					<!-- <div class="data-container tab-content" class:hidden={bottomRightPaneActiveTabIndex !== 1} bind:this={vegaDataContainer}><p>Data</p></div> -->
+					<div class="data-container tab-content" class:hidden={bottomRightPaneActiveTabIndex !== 1}>
+						<DataViewer view={currentView} />
+					</div>
+					<div class="occupancy-matrix-editor-container tab-content" class:hidden={bottomRightPaneActiveTabIndex !== 2} bind:this={occupancyMatrixEditorContainer}></div>
+					<div class="scene-graph-container tab-content" class:hidden={bottomRightPaneActiveTabIndex !== 3}>
+						{#if sceneGraphData}
+							<SceneGraph sceneGraph={sceneGraphData} />
+						{:else}
+							<div class="empty-state">
+								<p>Scene Graph will appear here after running the visualization</p>
+							</div>
+						{/if}
+					</div>
 				</TabGroup>
 			</Pane>
 		</Splitpanes>

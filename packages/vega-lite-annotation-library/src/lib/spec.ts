@@ -1,6 +1,78 @@
 // Styles
 import type { Blend, Cursor } from 'vega'
 
+// Curve Types
+export type BaseCurve = {
+    type: string
+    /** 
+     * Controls the direction of the curve's bend
+     * - 'clockwise': Force curve to bend clockwise
+     * - 'counterclockwise': Force curve to bend counterclockwise
+     * - 'auto': Automatically determine direction (default)
+     */
+    direction?: 'clockwise' | 'counterclockwise' | 'auto'
+    
+    /**
+     * Controls the amount of curve bending (0-1)
+     * - 0: No curve (straight line)
+     * - 1: Maximum curve
+     * - 0.5: Default curve amount
+     */
+    tension?: number
+}
+
+export type LinearCurve = BaseCurve & {
+    type: 'linear'
+}
+
+export type BasisCurve = BaseCurve & {
+    type: 'basis'
+}
+
+export type CardinalCurve = BaseCurve & {
+    type: 'cardinal'
+    tension?: number // Controls the tension of the cardinal curve (0-1)
+}
+
+export type CatmullRomCurve = BaseCurve & {
+    type: 'catmull-rom'
+    alpha?: number // Controls the parametrization (0-1), 0 = uniform, 0.5 = centripetal, 1 = chordal
+}
+
+export type MonotoneCurve = BaseCurve & {
+    type: 'monotone'
+    // Monotone preserves monotonicity, no additional parameters
+}
+
+export type NaturalCurve = BaseCurve & {
+    type: 'natural'
+    // Natural spline, no additional parameters
+}
+
+export type StepCurve = BaseCurve & {
+    type: 'step'
+    align?: 'center' | 'before' | 'after' // Controls the step position
+}
+
+export type StepAfterCurve = BaseCurve & {
+    type: 'step-after'
+}
+
+export type StepBeforeCurve = BaseCurve & {
+    type: 'step-before'
+}
+
+export type CurveObject = 
+    | LinearCurve 
+    | BasisCurve 
+    | CardinalCurve 
+    | CatmullRomCurve 
+    | MonotoneCurve 
+    | NaturalCurve 
+    | StepCurve 
+    | StepAfterCurve 
+    | StepBeforeCurve
+
 // Markers
 export type DataPointMarker = {
     type: 'data-expr'
@@ -169,6 +241,16 @@ export type EnclosureAnnotation = Annotation & {
     position?: FixedPosition
 }
 
+export type ArrowStyle = {
+    fill?: string
+    size?: number
+    shape?: 'triangle' | 'triangle-right' | 'triangle-up' | 'triangle-down' | 'arrow'
+    rotationAdjust?: number  // Angle adjustment in degrees
+    opacity?: number
+    stroke?: string
+    strokeWidth?: number
+}
+
 export type ConnectorAnnotation = Annotation & {
     // Connectors are mostly used for ensemble, then it will connect in precedence of "enclosure-text" > "target-text" > "target-enclosure" > error. If used solely without connect_to, error
     connect_to?: {
@@ -177,9 +259,35 @@ export type ConnectorAnnotation = Annotation & {
     }
     style?: LineStyle
     // path?: ShapePath
-    curve?: 'linear' | 'basis' | 'cardinal' | 'catmull-rom' | 'monotone' | 'natural' | 'step' | 'step-after' | 'step-before'
+    /** 
+     * Type of curve to use for the connector path
+     * Can be specified as either a string value or a curve object with specific parameters
+     */
+    curve?: 'linear' | 'basis' | 'cardinal' | 'catmull-rom' | 'monotone' | 'natural' | 'step' | 'step-after' | 'step-before' | CurveObject
+    /** 
+     * Control the direction of the curve:
+     * - 'clockwise': Force curve to bend clockwise
+     * - 'counterclockwise': Force curve to bend counterclockwise
+     * - 'auto': Automatically determine direction (default)
+     * 
+     * Note: This is used when curve is specified as a string. For object curve types, specify direction in the curve object.
+     */
+    curveDirection?: 'clockwise' | 'counterclockwise' | 'auto'
+    /**
+     * Control the amount of curvature (0-1):
+     * - 0: No curve (straight line)
+     * - 1: Maximum curve
+     * - 0.5: Default curve amount
+     * 
+     * Note: This is used when curve is specified as a string. For object curve types, specify tension in the curve object.
+     */
+    curveTension?: number
     dx2?: number
     dy2?: number
+    startArrow?: boolean
+    endArrow?: boolean
+    startArrowStyle?: ArrowStyle
+    endArrowStyle?: ArrowStyle
 }
 
 export type IndicatorAnnotation = Annotation & ({ // We haven't yet fully fleshed out the indicator annotation yet

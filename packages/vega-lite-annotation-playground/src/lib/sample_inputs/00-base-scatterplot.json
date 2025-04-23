@@ -1,6 +1,5 @@
 {
     "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
-    "name": "Scatterplot",
     "description": "A scatterplot showing horsepower and miles per gallons for various cars.",
     "data": {
         "url": "data/cars.json"

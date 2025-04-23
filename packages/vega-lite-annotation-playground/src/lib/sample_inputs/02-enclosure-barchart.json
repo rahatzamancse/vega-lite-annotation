@@ -1,6 +1,5 @@
 {
     "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
-    "name": "Barchart with Enclosure Annotations",
     "data": {
         "values": [
             {

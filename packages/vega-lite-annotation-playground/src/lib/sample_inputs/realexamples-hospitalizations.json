@@ -1,0 +1,296 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+    "width": 1200,
+    "height": 600,
+    "title": {
+        "text": [
+            "Hospitalizations and cases break records as the omicron",
+            "wave continues"
+        ],
+        "fontSize": 30,
+        "anchor": "start",
+        "fontWeight": "bold",
+        "subtitle": [
+            "Omicron's higher infection rate means hospitalizations are more than double their previous",
+            "peak. Currently, the seven-day average of new daily cases is more than triple its previous",
+            "peak, but the seven-day average of new daily deaths is about 49 percent of its previous peak."
+        ],
+        "offset": 18,
+        "dx": 200,
+        "subtitleFontSize": 20
+    },
+    "data": {
+        "url": "data/hospitalization.json"
+    },
+    "transform": [
+        {
+            "fold": [
+                "Cases_Percentage",
+                "Hospitalizations_Percentage",
+                "Deaths_Percentage"
+            ],
+            "as": [
+                "variable",
+                "value"
+            ]
+        }
+    ],
+    "mark": {
+        "type": "line",
+        "interpolate": "basis"
+    },
+    "encoding": {
+        "x": {
+            "field": "Day",
+            "type": "temporal",
+            "scale": {
+                "domain": [
+                    "2020-12-02",
+                    "2022-01-11"
+                ],
+                "range": [
+                    0,
+                    "width"
+                ]
+            },
+            "axis": {
+                "grid": false,
+                "title": null,
+                "tickOpacity": 0,
+                "labelFontSize": 16,
+                "labelOpacity": 0.6,
+                "values": [
+                    "2020-12-02",
+                    "2021-08-02",
+                    "2021-10-02",
+                    "2022-01-11"
+                ],
+                "format": "%b. %d, %Y"
+            }
+        },
+        "y": {
+            "field": "value",
+            "type": "quantitative",
+            "axis": {
+                "title": null,
+                "labelExpr": "datum.value == 300 ?  ['300% of', 'Jan. 2021', 'peak'] : datum.value + '%'",
+                "values": [
+                    0,
+                    100,
+                    200,
+                    300
+                ],
+                "labelFontSize": 16,
+                "labelOpacity": 1
+            },
+            "scale": {
+                "domain": [
+                    0,
+                    300
+                ]
+            }
+        },
+        "color": {
+            "field": "variable",
+            "type": "nominal",
+            "scale": {
+                "domain": [
+                    "Cases_Percentage",
+                    "Hospitalizations_Percentage",
+                    "Deaths_Percentage"
+                ],
+                "range": [
+                    "#ff7f0e",
+                    "#9467bd",
+                    "#d62728"
+                ]
+            },
+            "legend": {
+                "type": "symbol",
+                "direction": "horizontal",
+                "labelFontSize": 20,
+                "fill": "color",
+                "symbolSize": 280,
+                "title": null,
+                "orient": "none",
+                "legendX": 120,
+                "legendY": -70,
+                "symbolType": "circle",
+                "encode": {
+                    "labels": {
+                        "update": {
+                            "text": {
+                                "signal": "datum.value == 'Cases_Percentage' ? 'Cases' : datum.value == 'Hospitalizations_Percentage' ? 'Hospitalization' : 'Deaths'"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "annotations": [
+        {
+            "target": {
+                "type": "pixel-space",
+                "x": 88,
+                "y": 0
+            },
+            "enclosure": {
+                "shape": {
+                    "width": 120,
+                    "height": 600
+                },
+                "style": {
+                    "stroke": {
+                        "stroke": "none"
+                    },
+                    "fill": "#000000",
+                    "opacity": 0.1
+                }
+            },
+            "text": {
+                "text": "Jan. 2021 peak",
+                "position": "upperMiddle",
+                "style": {
+                    "fontWeight": "bold",
+                    "fontSize": 20
+                },
+                "dx": -35,
+                "dy": -3
+            }
+        },
+        {
+            "target": {
+                "type": "pixel-space",
+                "x": 1145,
+                "y": 0
+            },
+            "enclosure": {
+                "shape": {
+                    "width": 55,
+                    "height": 600
+                },
+                "style": {
+                    "stroke": {
+                        "stroke": "none"
+                    },
+                    "fill": "#000000",
+                    "opacity": 0.1
+                }
+            },
+            "text": {
+                "text": "Omicron wave",
+                "position": "upperLeft",
+                "style": {
+                    "fontWeight": "bold",
+                    "fontSize": 20
+                },
+                "dx": -35,
+                "dy": -3
+            }
+        },
+        {
+            "target": {
+                "type": "pixel-space",
+                "x": 10,
+                "y": 10
+            },
+            "text": {
+                "text": "The previous case peak was\non Jan. 11, 2021, with a\n248,128 7-day average. As\nof Jan. 10, 2022, the average\nwas 761,081 cases, 307 percent\nof the previous peak.",
+                "position": {
+                    "type": "pixel-space",
+                    "x": 270,
+                    "y": 200
+                },
+                "style": {
+                    "lineBreak": "\n",
+                    "fontSize": 24
+                }
+            },
+            "connector": {
+                "connect_to": {
+                    "target": {
+                        "type": "pixel-space",
+                        "x": 140,
+                        "y": 400
+                    },
+                    "position": "middleLeft"
+                },
+                "dy": 60,
+                "style": {
+                    "strokeDash": [],
+                    "strokeWidth": 2
+                },
+                "curve": "natural",
+                "endArrow": true
+            }
+        },
+        {
+            "target": {
+                "type": "pixel-space",
+                "x": 10,
+                "y": 10
+            },
+            "text": {
+                "text": "Numbers for deaths\nand hospitalizations\ntend to show a delay\ncompared to cases.\nBoth may still rise as\na result of higher\ncase rates.",
+                "position": {
+                    "type": "pixel-space",
+                    "x": 890,
+                    "y": 200
+                },
+                "style": {
+                    "lineBreak": "\n",
+                    "fontSize": 24
+                }
+            },
+            "connector": {
+                "connect_to": {
+                    "target": {
+                        "type": "pixel-space",
+                        "x": 1197,
+                        "y": 354
+                    },
+                    "position": "middleRight"
+                },
+                "dx": 220,
+                "dy": 70,
+                "style": {
+                    "strokeDash": [],
+                    "strokeWidth": 2
+                },
+                "curve": "natural",
+                "endArrow": true
+            }
+        },
+        {
+            "target": {
+                "type": "pixel-space",
+                "x": 700,
+                "y": 0
+            },
+            "enclosure": {
+                "shape": {
+                    "width": 180,
+                    "height": 600
+                },
+                "style": {
+                    "stroke": {
+                        "stroke": "none"
+                    },
+                    "fill": "#000000",
+                    "opacity": 0.1
+                }
+            },
+            "text": {
+                "text": "Delta Wave",
+                "position": "upperMiddle",
+                "style": {
+                    "fontWeight": "bold",
+                    "fontSize": 20
+                },
+                "dx": -25,
+                "dy": -3
+            }
+        }
+    ]
+}

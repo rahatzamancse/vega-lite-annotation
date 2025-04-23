@@ -1,0 +1,77 @@
+{}
+{}
+
+
+
+
+{ // Top-Level Spec
+"data": ...,
+"encoding": ...,
+"layer": { ..., 
+    "annotations": ... }
+"annotations": ...,
+}
+
+
+{ // Normalized Spec
+"data": { ... },
+"layer": [ { "mark": "...", ... },
+           ... ]
+}
+
+
+{ // Annotation in Layers
+"annotation_at_layer": ...,
+"annotation_type": ..., ...
+}
+{
+"data": [
+    { Source Data }
+],
+"marks": [
+    { Vega Source Marks }
+]
+}
+
+{
+"data": [
+    { Source Data },
+    { Annotation Data }
+],
+"marks": [
+    { Vega Source Marks },
+    { Vega Annotation Marks }
+]
+}
+
+
+
+{ // Highlight Rectangle
+    "target": {
+        "type": "data-space",
+        "x": "2021-01-11", "y": 0
+    },
+    "enclosure": {
+        "shape": { ... },
+        "style": { ... },
+    },
+    "text": {
+        "text": "Jan. 2021 peak",
+        "position": "upperMiddle",
+        "style": { ... }
+    }
+}, { // Peak at Jan. 11, 2021
+    "target": {
+        "type": "data-expr",
+        "expr": "datum.date == '2021-01-11'"
+    },
+    "text": {
+        "text": "The previous case...",
+        "position": {...},
+        "style": {...}
+    },
+    "connector": {
+        "curve": "natural",
+        "style": {...}
+    }
+}
