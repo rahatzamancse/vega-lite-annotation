@@ -74,9 +74,6 @@ function createTextMarkFromSpace(textAnnotation: TextAnnotation, vega_spec: vega
     else if (position.type === 'data-space') {
         const view = new vega.View(vega.parse(vega_spec)).initialize().run();
         const { xScaleName, yScaleName } = getScaleNames(vega_spec);
-        console.log("xScaleName", xScaleName)
-        console.log("yScaleName", yScaleName)
-        console.log(view.scale(xScaleName))
         x = view.scale(xScaleName)(position.x);
         y = view.scale(yScaleName)(position.y);
     }
@@ -116,10 +113,7 @@ function calculateTextPosition(textAnnotation: TextAnnotation, boundingBox: {x1:
     else if (textAnnotation.position === 'upperMiddle')
         return {x: (boundingBox.x2 + boundingBox.x1) / 2, y: boundingBox.y1};
     else if (textAnnotation.position === 'lowerMiddle')
-    {
-        console.log("DEBUG: lowerMiddle", boundingBox)
         return {x: (boundingBox.x2 + boundingBox.x1) / 2, y: boundingBox.y2};
-    }
     else if (textAnnotation.position === 'lowerRight')
         return {x: boundingBox.x2, y: boundingBox.y2};
     else if (textAnnotation.position === 'middleMiddle')
@@ -130,7 +124,6 @@ function calculateTextPosition(textAnnotation: TextAnnotation, boundingBox: {x1:
 }
 
 export async function addTextAnnotation_unit(annotation: RootAnnotation, vega_spec: vega.Spec, vlna_spec: VLATopLevel<VLANormalizedSpec>, enclosureData: EnclosureData | null): Promise<TextData | TextData[]> {
-    console.log("Adding text annotation");
     if (!vega_spec.marks) vega_spec.marks = [];
     
     if (!annotation.text) throw new Error("Text annotation is required");
@@ -169,12 +162,9 @@ export async function addTextAnnotation_unit(annotation: RootAnnotation, vega_sp
         else if (annotation.target.type === 'data-index' || annotation.target.type === 'data-expr') {
             const markData = await getMarkBoundingBoxFromInternalData(vega_spec, annotation.target as DataPointMarker);
             
-            console.log("DEBUG: markData from getMarkBoundingBoxFromInternalData in textAnnotation", markData);
-            
             if (!annotation.connector) {
                 textMark = [];
                 markData.forEach((d, i) => {
-                    console.log("DEBUG: markData", d);
                     if ('bounds' in d) {
                         const {x, y} = calculateTextPosition(textAnnotation, d.bounds as {x1: number, y1: number, x2: number, y2: number});
                         (textMark as vega.TextMark[]).push(createTextMarkFromSpace(
@@ -185,7 +175,7 @@ export async function addTextAnnotation_unit(annotation: RootAnnotation, vega_sp
                         ));
                     }
                     else {
-                        console.log("DEBUG: No bounding box found for text annotation", d);
+                        console.error("No bounding box found for text annotation", d);
                     }
                 })
             }
@@ -199,7 +189,6 @@ export async function addTextAnnotation_unit(annotation: RootAnnotation, vega_sp
         }
     }
     
-    console.log("Final textMark", textMark!);
     if (Array.isArray(textMark!)) {
         textMark.forEach(t => {
             applyTextOffset(t, textAnnotation);

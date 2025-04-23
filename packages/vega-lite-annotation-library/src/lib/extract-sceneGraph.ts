@@ -4,15 +4,9 @@ import { VLANonNormalizedSpec, VLATopLevelSpec } from "./vlAnnotationTypes";
 import * as vega from 'vega';
 
 
-export function vlnaToSceneGraph(spec: VLANonNormalizedSpec): vega.Scene {
-    // Deep copy the spec
-    const vlna_spec: VLATopLevelSpec = JSON.parse(JSON.stringify(spec))
-    
-    // Compile to Vega
-    const vega_spec = vlaToV(vlna_spec)
-    
+export async function vegaSpecToSceneGraph(spec: vega.Spec): Promise<vega.Scene> {
     // Convert Vega spec to SceneGraph
-    const runtime = vega.parse(vega_spec)
+    const runtime = vega.parse(spec)
     const view = new vega.View(runtime).initialize().run();
     
     const sceneGraph = view.scenegraph();
@@ -147,12 +141,10 @@ export async function getMarkBoundingBoxFromInternalData(spec: vega.Spec, target
         marksData = view.data("marks");
     }
     else {
-        console.log("No marks data found, searching for dataset with the right structure")
         // Loop through all datasets to find one with the right structure
         let maxRows = 0;
         for (const name of datasetNames) {
             const data = view.data(name);
-            console.log("data", data)
             if (data && data.length > 0 && 
                 data[0] && 
                 (data[0].datum !== undefined || 
@@ -166,7 +158,6 @@ export async function getMarkBoundingBoxFromInternalData(spec: vega.Spec, target
         }
     }
     
-    console.log("marksData", marksData)
     
     if (!marksData) {
         throw new Error("No marks data found");
@@ -175,10 +166,6 @@ export async function getMarkBoundingBoxFromInternalData(spec: vega.Spec, target
     if (!dataset) {
         dataset = view.data(spec.data?.[0]?.name || "source");
     }
-    
-    console.log("datasetNames", datasetNames)
-    console.log("dataset", dataset)
-    console.log("marksData", marksData)
     
     let datum;
     // Handle different types of data point markers
@@ -247,7 +234,6 @@ export async function getMarkBoundingBoxFromInternalData(spec: vega.Spec, target
         return matchingMarks;
     }
     else {
-        console.log("No matching data found, returning empty array");
         return [];
     }
 }

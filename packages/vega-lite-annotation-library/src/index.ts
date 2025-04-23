@@ -12,3 +12,11 @@ export type {
 export {
     RootAnnotation as Annotation,
 } from './lib/spec'
+
+export {
+    createOccupancyMatrix
+} from './lib/positionResolver'
+
+export {
+    vegaSpecToSceneGraph
+} from './lib/extract-sceneGraph'

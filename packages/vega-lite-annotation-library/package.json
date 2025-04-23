@@ -7,7 +7,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsup src/index.ts --format cjs,esm --dts",
-    "lint": "tsc"
+    "lint": "tsc",
+    "generate-schema": "node scripts/generate-schema.js"
   },
   "keywords": [],
   "author": "",
@@ -22,6 +23,7 @@
   "dependencies": {
     "d3-path": "^3.1.0",
     "d3-shape": "^3.2.0",
+    "typescript-json-schema": "^0.65.1",
     "vega": "^6.1.2",
     "vega-lite": "^6.1.0"
   }

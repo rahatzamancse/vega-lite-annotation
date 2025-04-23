@@ -209,7 +209,6 @@ function createConnectorMarkFromSpace(connectorAnnotation: ConnectorAnnotation, 
 export async function addConnectorAnnotation_unit(annotation: RootAnnotation, vega_spec: vega.Spec, vlna_spec: VLATopLevel<VLANormalizedSpec>, enclosureData: EnclosureData | null, textData: TextData | TextData[] | null): Promise<ConnectorData | ConnectorData[] | null> {
     // Connectors are mostly used for ensemble, then it will connect in precedence of
     // "enclosure-connect_to" > "text-connect_to" > "target-connect_to" > "enclosure-text" > "target-text" > "target-enclosure" > error.
-    console.log("Adding connector annotation");
     if (!vega_spec.marks) vega_spec.marks = [];
 
     if (!annotation.connector) throw new Error("Connector annotation is required");
@@ -223,21 +222,17 @@ export async function addConnectorAnnotation_unit(annotation: RootAnnotation, ve
     
     // populate x2/y2
     if (connectorAnnotation.connect_to) {
-        console.log("DEBUG: Populating x2/y2 using connectorAnnotation.connect_to");
         if (connectorAnnotation.connect_to.target.type === 'pixel-space') {
-            console.log("DEBUG: connect_to is pixel-space");
             x2 = [connectorAnnotation.connect_to.target.x];
             y2 = [connectorAnnotation.connect_to.target.y];
         }
         else if (connectorAnnotation.connect_to.target.type === 'data-space') {
-            console.log("DEBUG: connect_to is data-space");
             const view = new vega.View(vega.parse(vega_spec)).initialize().run();
             const { xScaleName, yScaleName } = getScaleNames(vega_spec);
             x2 = [view.scale(xScaleName)(connectorAnnotation.connect_to.target.x)];
             y2 = [view.scale(yScaleName)(connectorAnnotation.connect_to.target.y)];
         }
         else if (connectorAnnotation.connect_to.target.type === 'data-index' || connectorAnnotation.connect_to.target.type === 'data-expr') {
-            console.log("DEBUG: connect_to is data-index or data-expr");
             const markData = await getMarkBoundingBoxFromInternalData(vega_spec, connectorAnnotation.connect_to.target);
             x2 = [];
             y2 = [];
@@ -250,17 +245,13 @@ export async function addConnectorAnnotation_unit(annotation: RootAnnotation, ve
         }
     }
     else {
-        console.log("DEBUG: No connect_to, fallback for x2/y2");
         if (textData) {
-            console.log("DEBUG: Using textData for x2/y2");
             // x2 and y2 be the textData positions
             if (Array.isArray(textData)) {
-                console.log("DEBUG: textData is array");
                 x2 = textData.map(t => t.x);
                 y2 = textData.map(t => t.y);
             }
             else {
-                console.log("DEBUG: textData is single object");
                 x2 = [textData.x];
                 y2 = [textData.y];
             }
@@ -269,42 +260,33 @@ export async function addConnectorAnnotation_unit(annotation: RootAnnotation, ve
     
     // populate x and y
     if (connectorAnnotation.connect_to) {
-        console.log("DEBUG: Populating x/y with connect_to present");
         if (textData) {
-            console.log("DEBUG: Using textData for x/y");
             if (Array.isArray(textData)) {
-                console.log("DEBUG: textData is array");
                 x = textData.map(t => t.x);
                 y = textData.map(t => t.y);
             }
             else {
-                console.log("DEBUG: textData is single object");
                 x = [textData.x];
                 y = [textData.y];
             }
         }
         else if (enclosureData) {
-            console.log("DEBUG: Using enclosureData for x/y");
             x = [(enclosureData.x + enclosureData.x2) / 2];
             y = [(enclosureData.y + enclosureData.y2) / 2];
         }
         else {
-            console.log("DEBUG: Using target directly for x/y");
             // use target directly
             if (annotation.target?.type === 'pixel-space') {
-                console.log("DEBUG: target is pixel-space");
                 x = [annotation.target.x];
                 y = [annotation.target.y];
             }
             else if (annotation.target?.type === 'data-space') {
-                console.log("DEBUG: target is data-space");
                 const view = new vega.View(vega.parse(vega_spec)).initialize().run();
                 const { xScaleName, yScaleName } = getScaleNames(vega_spec);
                 x = [view.scale(xScaleName)(annotation.target.x)];
                 y = [view.scale(yScaleName)(annotation.target.y)];
             }
             else if (annotation.target?.type === 'data-index' || annotation.target?.type === 'data-expr') {
-                console.log("DEBUG: target is data-index or data-expr");
                 const markData = await getMarkBoundingBoxFromInternalData(vega_spec, annotation.target);
                 x = [];
                 y = [];
@@ -316,30 +298,23 @@ export async function addConnectorAnnotation_unit(annotation: RootAnnotation, ve
         }
     }
     else {
-        console.log("DEBUG: No connect_to, fallback for x/y");
         if (textData && enclosureData) {
-            console.log("DEBUG: Using both textData and enclosureData for x/y");
             x = [(enclosureData.x + enclosureData.x2) / 2];
             y = [(enclosureData.y + enclosureData.y2) / 2];
         }
         else if (textData) {
-            console.log("DEBUG: Using target for x/y");
             if (annotation.target?.type === 'pixel-space') {
-                console.log("DEBUG: target is pixel-space");
                 x = [annotation.target.x];
                 y = [annotation.target.y];
             }
             else if (annotation.target?.type === 'data-space') {
-                console.log("DEBUG: target is data-space");
                 const view = new vega.View(vega.parse(vega_spec)).initialize().run();
                 const { xScaleName, yScaleName } = getScaleNames(vega_spec);
                 x = [view.scale(xScaleName)(annotation.target.x)];
                 y = [view.scale(yScaleName)(annotation.target.y)];
             }
             else if (annotation.target?.type === 'data-index' || annotation.target?.type === 'data-expr') {
-                console.log("DEBUG: target is data-index or data-expr");
                 const markData = await getMarkBoundingBoxFromInternalData(vega_spec, annotation.target);
-                console.log("markData", markData);
                 if (markData.length === 0) throw new Error("Mark data is empty");
                 x = [];
                 y = [];
@@ -352,14 +327,11 @@ export async function addConnectorAnnotation_unit(annotation: RootAnnotation, ve
     }
 
     // At this point, x, y, x2, y2 should be defined
-    console.log("DEBUG: Final coordinates:", { x, y, x2, y2 });
     if (x.length === 0 || y.length === 0 || x2.length === 0 || y2.length === 0) {
-        console.log("DEBUG: Returning null, coordinates arrays are empty");
         return null;
     }
 
     // create connector marks
-    console.log("DEBUG: Creating connector marks");
     const connectorMarks: vega.PathMark[] = [];
     for (let i = 0; i < x.length; i++) {
         for (let j = 0; j < x2.length; j++) {
@@ -388,6 +360,5 @@ export async function addConnectorAnnotation_unit(annotation: RootAnnotation, ve
         }
     }
     vega_spec.marks?.push(...connectorMarks);
-    console.log("DEBUG: Returning connector data");
     return createConnectorData(connectorMarks);
 }

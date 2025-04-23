@@ -183,7 +183,6 @@ function createRectMarkFromSpace(enclosureAnnotation: EnclosureAnnotation, vega_
 }
 
 export async function addEnclosureAnnotation_unit(annotation: RootAnnotation, vega_spec: vega.Spec, vlna_spec: VLATopLevel<VLANormalizedSpec>): Promise<EnclosureData | null> {
-    console.log("Adding enclosure annotation");
     if (!vega_spec.marks) vega_spec.marks = [];
 
     if (!annotation.enclosure) throw new Error("Enclosure annotation is required");
@@ -217,7 +216,6 @@ export async function addEnclosureAnnotation_unit(annotation: RootAnnotation, ve
             // Process mark data to determine the bounding box
             markData.forEach(d => {
                 if ('bounds' in d) {
-                    console.log("d", d)
                     if (x === undefined) {
                         x = d.bounds.x1;
                         y = d.bounds.y1;
@@ -230,7 +228,6 @@ export async function addEnclosureAnnotation_unit(annotation: RootAnnotation, ve
                         x2 = Math.max(x2, d.bounds.x2);
                         y2 = Math.max(y2, d.bounds.y2);
                     }
-                    console.log("x, y, x2, y2", x, y, x2, y2);
                 }
                 else {
                     throw new Error("Mark data does not contain bounds");
@@ -251,9 +248,7 @@ export async function addEnclosureAnnotation_unit(annotation: RootAnnotation, ve
     }
     
     applyRectStyleProperties(enclosureMark!, enclosureAnnotation);
-    console.log("before applyRectOffsetAndPadding", createEnclosureData(enclosureMark!));
     applyRectOffsetAndPadding(enclosureMark!, enclosureAnnotation);
-    console.log("after applyRectOffsetAndPadding", createEnclosureData(enclosureMark!));
     vega_spec.marks.push(enclosureMark!);
     return createEnclosureData(enclosureMark!);
 }
