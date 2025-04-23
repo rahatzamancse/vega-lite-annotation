@@ -19,6 +19,9 @@
 
 	import * as vega from 'vega';
 
+	// Constants for storage
+	const STORAGE_KEY = 'vega-lite-annotation-editor-content';
+
 	const preloadedJsons = Object.entries(
 		import.meta.glob<VLAnnotation.VLATopLevelSpec>(['$lib/sample_inputs/*.json', '$lib/sample_inputs/*.json5'], {
 			eager: true,
@@ -223,8 +226,41 @@
 			}
 		});
 
-		// Load the first example
-		onLoadJson(preloadedJsons.find(json => json.filename === DEFAULT_EXAMPLE)!);
+		// Load content - first check URL params, then localStorage
+		let initialContent = '';
+		
+		// Check URL parameters for compressed content
+		if (typeof window !== 'undefined') {
+			const urlParams = new URLSearchParams(window.location.search);
+			const compressedSpec = urlParams.get('spec');
+			
+			if (compressedSpec) {
+				try {
+					// Decompress the content
+					initialContent = LZString.decompressFromEncodedURIComponent(compressedSpec);
+					console.log('Loaded content from URL parameter');
+				} catch (error) {
+					console.error('Error decompressing URL parameter:', error);
+				}
+			} else if (typeof localStorage !== 'undefined') {
+				// If no URL parameter, try to load from localStorage
+				const savedContent = localStorage.getItem(STORAGE_KEY);
+				if (savedContent) {
+					initialContent = savedContent;
+					console.log('Loaded content from local storage');
+				}
+			}
+		}
+		
+		// Set the saved content if available, otherwise load the default example
+		if (initialContent) {
+			vlAnnotationEditor.setValue(initialContent);
+			if (autorunEnabled) {
+				runButtonClicked();
+			}
+		} else {
+			onLoadJson(preloadedJsons.find(json => json.filename === DEFAULT_EXAMPLE)!);
+		}
 	});
 
 	$effect(() => {
@@ -301,6 +337,11 @@
 
 	const runButtonClicked = async () => {
 		const input = vlAnnotationEditor.getValue();
+		
+		// Save to localStorage whenever the visualization is run
+		if (typeof localStorage !== 'undefined') {
+			localStorage.setItem(STORAGE_KEY, input);
+		}
 		
 		try {
 			// Try to safely evaluate the input as a JavaScript object (for JSON5 support)
@@ -393,6 +434,15 @@
 		// TODO: Implement this
 		return vlaSpec;
 	};
+
+	// Add a function to generate a shareable link
+	const generateShareableLink = () => {
+		const vlaSpec = vlAnnotationEditor.getValue();
+		const compressedSpec = LZString.compressToEncodedURIComponent(vlaSpec);
+		const url = new URL(window.location.href);
+		url.search = `?spec=${compressedSpec}`;
+		return url.toString();
+	};
 </script>
 
 <!-- Header -->
@@ -437,6 +487,14 @@
 			{/if}
 		</div>
 		<button class="examples-button" onclick={() => (examplesModalOpen = true)}>Examples</button>
+		<button 
+			class="share-button" 
+			onclick={() => {
+				const shareUrl = generateShareableLink();
+				navigator.clipboard.writeText(shareUrl);
+				alert('Shareable link copied to clipboard!');
+			}}
+		>Share</button>
 	</div>
 	<div class="header-right">
 		<button
@@ -880,5 +938,28 @@
 
 	:global(.vega-diffs) {
 		background-color: rgba(0, 102, 204, 0.1);
+	}
+
+	.share-button {
+		padding: 0 1rem;
+		border: none;
+		border-radius: 0;
+		background: white;
+		cursor: pointer;
+		height: 100%;
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		font-size: 0.9rem;
+		color: #333;
+		transition: background-color 0.2s ease;
+	}
+
+	.share-button::before {
+		content: '🔗';
+	}
+
+	.share-button:hover {
+		background: #f8f8f8;
 	}
 </style>
