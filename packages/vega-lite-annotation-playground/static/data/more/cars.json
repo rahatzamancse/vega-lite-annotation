@@ -1,0 +1,62 @@
+[
+  {
+    "model": "Sedan",
+    "sales": 1200,
+    "price": 25000,
+    "mpg": 32
+  },
+  {
+    "model": "SUV",
+    "sales": 1800,
+    "price": 35000,
+    "mpg": 24
+  },
+  {
+    "model": "Pickup",
+    "sales": 950,
+    "price": 40000,
+    "mpg": 18
+  },
+  {
+    "model": "Compact",
+    "sales": 1500,
+    "price": 22000,
+    "mpg": 36
+  },
+  {
+    "model": "Hybrid",
+    "sales": 1100,
+    "price": 30000,
+    "mpg": 52
+  },
+  {
+    "model": "Electric",
+    "sales": 750,
+    "price": 45000,
+    "mpg": 128
+  },
+  {
+    "model": "Minivan",
+    "sales": 600,
+    "price": 32000,
+    "mpg": 25
+  },
+  {
+    "model": "Luxury",
+    "sales": 450,
+    "price": 55000,
+    "mpg": 22
+  },
+  {
+    "model": "Sports",
+    "sales": 300,
+    "price": 60000,
+    "mpg": 19
+  },
+  {
+    "model": "Subcompact",
+    "sales": 850,
+    "price": 18000,
+    "mpg": 39
+  }
+] 
