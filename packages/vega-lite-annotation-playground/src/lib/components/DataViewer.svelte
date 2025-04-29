@@ -193,7 +193,7 @@
 	{:else}
 		<div class="data-controls">
 			<label for="data-selector">Dataset:</label>
-			<select id="data-selector" bind:value={selectedDataName} on:change={updateSelectedData}>
+			<select id="data-selector" bind:value={selectedDataName} onchange={updateSelectedData}>
 				{#each dataNames as name}
 					<option value={name}>{name}</option>
 				{/each}
@@ -241,7 +241,7 @@
 					<button 
 						class="pagination-button" 
 						disabled={currentPage === 1} 
-						on:click={goToFirstPage}
+						onclick={goToFirstPage}
 						title="First page"
 					>
 						&laquo;
@@ -249,7 +249,7 @@
 					<button 
 						class="pagination-button" 
 						disabled={currentPage === 1} 
-						on:click={goToPreviousPage}
+						onclick={goToPreviousPage}
 						title="Previous page"
 					>
 						&lsaquo;
@@ -262,7 +262,7 @@
 					<button 
 						class="pagination-button" 
 						disabled={currentPage === totalPages} 
-						on:click={goToNextPage}
+						onclick={goToNextPage}
 						title="Next page"
 					>
 						&rsaquo;
@@ -270,7 +270,7 @@
 					<button 
 						class="pagination-button" 
 						disabled={currentPage === totalPages} 
-						on:click={goToLastPage}
+						onclick={goToLastPage}
 						title="Last page"
 					>
 						&raquo;
@@ -279,7 +279,7 @@
 				
 				<div class="page-size-selector">
 					<label for="page-size">Rows per page:</label>
-					<select id="page-size" value={pageSize} on:change={handlePageSizeChange}>
+					<select id="page-size" value={pageSize} onchange={handlePageSizeChange}>
 						{#each pageSizeOptions as size}
 							<option value={size}>{size}</option>
 						{/each}

@@ -2,10 +2,10 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import LZString from 'lz-string';
-    import hospitalizationsExample from '$lib/sample_inputs/realexamples-hospitalizations.json';
+	import { loadJsonFile } from '$lib/utils';
 
 	onMount(() => {
-		const teaserCode = hospitalizationsExample;
+		const teaserCode = loadJsonFile('sample_inputs/realexamples-hospitalizations.json');
 
 		// Compress the code and redirect
 		const compressedSpec = LZString.compressToEncodedURIComponent(JSON.stringify(teaserCode, null, 2));
