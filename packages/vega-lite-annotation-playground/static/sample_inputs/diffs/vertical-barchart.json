@@ -64,17 +64,22 @@
                 "index": 4
             },
             "text": {
-                "text": "Hybrid\nBest balance of price and efficiency",
+                "text": "Hybrid: Best balance of\n price and efficiency",
                 "style": {
-                    "lineBreak": "\n"
+                    "lineBreak": "\n",
+                    "fontSize": 20
                 },
                 "position": "upperMiddle",
-                "dx": 0,
+                "dx": -40,
                 "dy": -50
             },
             "connector": {
-                "dy2": -30,
-                "style": {}
+                "style": {
+                    "strokeDash": [],
+                    "strokeWidth": 3
+                },
+                "curve": "cardinal",
+                "dy2": -30
             },
             "enclosure": {
                 "padding": 5
@@ -86,9 +91,14 @@
                 "index": 8
             },
             "text": {
-                "text": "Sports cars are least efficient",
+                "text": "Sports cars are\nleast efficient",
                 "position": "lowerMiddle",
-                "dx": -20
+                "style": {
+                    "fontSize": 20,
+                    "lineBreak": "\n"
+                },
+                "dx": -10,
+                "dy": 0
             }
         },
         {
@@ -97,9 +107,14 @@
                 "index": 5
             },
             "text": {
-                "text": "Electric cars have highest efficiency",
+                "text": "Electric cars have\nhighest efficiency",
                 "position": "upperMiddle",
-                "dx": -20
+                "style": {
+                    "fontSize": 20,
+                    "lineBreak": "\n"
+                },
+                "dx": -20,
+                "dy": -10
             }
         }
     ]

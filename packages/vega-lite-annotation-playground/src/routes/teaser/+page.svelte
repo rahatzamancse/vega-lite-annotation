@@ -4,11 +4,13 @@
 	import LZString from 'lz-string';
 	import { loadJsonFile } from '$lib/utils';
 
-	onMount(() => {
-		const teaserCode = loadJsonFile('sample_inputs/realexamples-hospitalizations.json');
+	onMount(async () => {
+		const teaserCode = await loadJsonFile('realexamples-hospitalizations.json');
+		
+		console.log(teaserCode);
 
 		// Compress the code and redirect
-		const compressedSpec = LZString.compressToEncodedURIComponent(JSON.stringify(teaserCode, null, 2));
+		const compressedSpec = LZString.compressToEncodedURIComponent(JSON.stringify(teaserCode.json, null, 2));
 		goto(`/?spec=${compressedSpec}`);
 	});
 </script>

@@ -1,16 +1,15 @@
 {
     "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-    "width": 400,
+    "width": 600,
     "height": 400,
-    "title": "Car Price vs Sales (Annotated)",
+    "title": "Car Price vs Fuel Efficiency (Annotated)",
     "data": {
         "url": "data/more/cars.json"
     },
     "mark": {
-        "type": "bar",
-        "orient": "horizontal",
-        "height": 30,
-        "binSpacing": 0
+        "type": "point",
+        "filled": true,
+        "size": 100
     },
     "encoding": {
         "x": {
@@ -18,16 +17,21 @@
             "type": "quantitative",
             "title": "Price ($)",
             "scale": {
-                "zero": false
+                "zero": false,
+                "padding": 10
             },
             "axis": {
                 "grid": false
             }
         },
         "y": {
-            "field": "sales",
-            "type": "nominal",
-            "title": "Sales (units)",
+            "field": "mpg",
+            "type": "quantitative",
+            "title": "Fuel Efficiency (MPG)",
+            "scale": {
+                "zero": false,
+                "padding": 10
+            },
             "axis": {
                 "grid": false
             }
@@ -69,18 +73,22 @@
                 "index": 4
             },
             "text": {
-                "text": "Hybrid\nBest balance of price and efficiency",
+                "text": "Hybrid: Best balance of\n price and efficiency",
                 "style": {
-                    "lineBreak": "\n"
+                    "lineBreak": "\n",
+                    "fontSize": 20
                 },
                 "position": "upperMiddle",
-                "dx": 80,
-                "dy": 10
+                "dx": -40,
+                "dy": -50
             },
             "connector": {
-                "dx2": 80,
-                "dy2": 10,
-                "style": {}
+                "style": {
+                    "strokeDash": [],
+                    "strokeWidth": 3
+                },
+                "curve": "cardinal",
+                "dy2": -30
             },
             "enclosure": {
                 "padding": 5
@@ -92,9 +100,14 @@
                 "index": 8
             },
             "text": {
-                "text": "Sports cars are least efficient",
+                "text": "Sports cars are\nleast efficient",
                 "position": "lowerMiddle",
-                "dy": 10
+                "style": {
+                    "fontSize": 20,
+                    "lineBreak": "\n"
+                },
+                "dx": -10,
+                "dy": 0
             }
         },
         {
@@ -103,9 +116,14 @@
                 "index": 5
             },
             "text": {
-                "text": "Electric cars have highest efficiency",
+                "text": "Electric cars have\nhighest efficiency",
                 "position": "upperMiddle",
-                "dx": -20
+                "style": {
+                    "fontSize": 20,
+                    "lineBreak": "\n"
+                },
+                "dx": -20,
+                "dy": -10
             }
         }
     ]

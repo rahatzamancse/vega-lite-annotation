@@ -100,10 +100,10 @@
 <!-- Header -->
 <div class="header">
 	<div class="header-left">
-		<div class="logo-container">
+		<button class="logo-container" onclick={() => window.location.href = '/'}>
 			<span class="logo">📊</span>
 			<span class="app-name">VL-Annotations</span>
-		</div>
+		</button>
 		<div class="run-button-container">
 			<button class="run-button" onclick={runButtonClicked}>
 				<div class="run-button-content">
@@ -238,6 +238,16 @@
 		gap: 0.5rem;
 		padding: 0 1rem;
 		height: 100%;
+		cursor: pointer;
+		transition: background-color 0.2s ease;
+		border: none;
+		background: none;
+		font: inherit;
+		color: inherit;
+	}
+
+	.logo-container:hover {
+		background: #f8f8f8;
 	}
 
 	.logo {
