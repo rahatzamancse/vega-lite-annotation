@@ -1,0 +1,99 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+    "description": "A scatterplot showing body mass and flipper lengths of penguins.",
+    "data": {
+        "url": "data/penguins.json"
+    },
+    "mark": "point",
+    "encoding": {
+        "x": {
+            "field": "Flipper Length (mm)",
+            "type": "quantitative",
+            "scale": {
+                "zero": false
+            }
+        },
+        "y": {
+            "field": "Body Mass (g)",
+            "type": "quantitative",
+            "scale": {
+                "zero": false
+            }
+        },
+        "color": {
+            "field": "Species",
+            "type": "nominal"
+        },
+        "shape": {
+            "field": "Species",
+            "type": "nominal"
+        }
+    },
+    "annotations": [
+        {
+            "target": {
+                "type": "pixel-space",
+                "x": 200,
+                "y": 220
+            },
+            "text": {
+                "text": "Empty Space",
+                "position": "lowerMiddle",
+                "dy": 8,
+                "dx": -20,
+                "style": {
+                    "fontSize": 16
+                }
+            },
+            "enclosure": {
+                "shape": {
+                    "type": "rect",
+                    "width": 60,
+                    "height": 30
+                }
+            }
+        },
+        {
+            "target": {
+                "type": "data-index",
+                "indices": [
+                    28,
+                    38,
+                    6
+                ]
+            },
+            "text": {
+                "text": "Multiple Points",
+                "position": {
+                    "type": "pixel-space",
+                    "x": 10,
+                    "y": 100
+                },
+                "style": {}
+            },
+            "connector": {
+                "style": {
+                    "strokeDash": []
+                },
+                "dx2": 30
+            }
+        },
+        {
+            "target": {
+                "type": "data-expr",
+                "expr": "datum.Species === 'Gentoo' && datum['Beak Length (mm)'] >= 55"
+            },
+            "text": {
+                "text": "Points\nSelection",
+                "position": "upperMiddle",
+                "dy": -10,
+                "dx": -10,
+                "style": {
+                    "lineBreak": "\n",
+                    "fontSize": 14
+                }
+            },
+            "enclosure": {}
+        }
+    ]
+}

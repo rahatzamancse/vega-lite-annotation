@@ -1,0 +1,84 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+    "description": "A simple donut chart with embedded data.",
+    "data": {
+        "values": [
+            {
+                "category": 1,
+                "value": 4
+            },
+            {
+                "category": 2,
+                "value": 6
+            },
+            {
+                "category": 3,
+                "value": 10
+            },
+            {
+                "category": 4,
+                "value": 3
+            },
+            {
+                "category": 5,
+                "value": 7
+            },
+            {
+                "category": 6,
+                "value": 8
+            }
+        ]
+    },
+    "mark": {
+        "type": "arc",
+        "innerRadius": 50
+    },
+    "encoding": {
+        "theta": {
+            "field": "value",
+            "type": "quantitative"
+        },
+        "color": {
+            "field": "category",
+            "type": "nominal"
+        }
+    },
+    "annotations": [
+        {
+            "target": {
+                "type": "data-index",
+                "indices": [
+                    2
+                ]
+            },
+            "text": {
+                "text": "Big Pie!",
+                "position": {
+                    "type": "pixel-space",
+                    "x": 280,
+                    "y": 300
+                },
+                "style": {
+                    "fontSize": 32,
+                    "angle": -45
+                }
+            },
+            "connector": {
+                "dx": 70,
+                "dy": 40,
+                "dx2": 40,
+                "dy2": -90,
+                "style": {
+                    "strokeDash": [],
+                    "strokeWidth": 2
+                },
+                "curve": "basis",
+                "curveTension": 4,
+                "endArrow": true,
+                "endArrowStyle": {
+                    "rotationAdjust": 180
+                }
+            }
+        }
+    ]
+}

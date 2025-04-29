@@ -1,0 +1,101 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+    "data": {
+        "values": [
+            {
+                "category": "A",
+                "group": "x",
+                "value": 0.1
+            },
+            {
+                "category": "A",
+                "group": "y",
+                "value": 0.6
+            },
+            {
+                "category": "A",
+                "group": "z",
+                "value": 0.9
+            },
+            {
+                "category": "B",
+                "group": "x",
+                "value": 0.7
+            },
+            {
+                "category": "B",
+                "group": "y",
+                "value": 0.2
+            },
+            {
+                "category": "B",
+                "group": "z",
+                "value": 1.1
+            },
+            {
+                "category": "C",
+                "group": "x",
+                "value": 0.6
+            },
+            {
+                "category": "C",
+                "group": "y",
+                "value": 0.1
+            },
+            {
+                "category": "C",
+                "group": "z",
+                "value": 0.2
+            }
+        ]
+    },
+    "mark": "bar",
+    "encoding": {
+        "x": {
+            "field": "category"
+        },
+        "y": {
+            "field": "value",
+            "type": "quantitative"
+        },
+        "xOffset": {
+            "field": "group"
+        },
+        "color": {
+            "field": "group"
+        }
+    },
+    "annotations": [
+        {
+            "target": {
+                "type": "data-expr",
+                "expr": "datum.value < 0.25 && datum.category == 'C'"
+            },
+            "text": {
+                "text": "Data Index",
+                "position": {
+                    "type": "pixel-space",
+                    "x": 240,
+                    "y": 140
+                },
+                "dy": -4,
+                "style": {
+                    "angle": 45
+                }
+            },
+            "enclosure": {
+                "padding": 10
+            },
+            "connector": {
+                "curve": "natural",
+                "curveDirection": "clockwise",
+                "dx2": 20,
+                "dy2": 20,
+                "dy": -35,
+                "style": {
+                    "strokeDash": []
+                }
+            }
+        }
+    ]
+}
