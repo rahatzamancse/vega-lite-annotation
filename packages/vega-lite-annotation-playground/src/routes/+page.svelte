@@ -56,6 +56,10 @@
 	let bottomRightPaneActiveTabIndex = $state(0);
 	
 	let sceneGraphData: vega.Scene | null = $state(null);
+	
+	const onExampleModalChange = (isOpen: boolean) => {
+		isExampleModalOpen = isOpen;
+	}
 
 
 	onMount(async () => {
@@ -122,11 +126,13 @@
 
 		// Load content - first check URL params, then localStorage
 		let initialContent = '';
+		let shouldOpenExamplesModal = false;
 		
 		// Check URL parameters for compressed content
 		if (typeof window !== 'undefined') {
 			const urlParams = new URLSearchParams(window.location.search);
 			const compressedSpec = urlParams.get('spec');
+			shouldOpenExamplesModal = urlParams.get('examples') === 'true';
 			
 			if (compressedSpec) {
 				try {
@@ -154,6 +160,11 @@
 			}
 		} else {
 			onLoadJson(await loadJsonFile(DEFAULT_EXAMPLE));
+		}
+		
+		// Open examples modal if requested via URL parameter
+		if (shouldOpenExamplesModal) {
+			isExampleModalOpen = true;
 		}
 	});
 
@@ -356,6 +367,7 @@
 	{generateShareableLink}
 	{isExampleModalOpen}
 	{toggleAutorun}
+	{onExampleModalChange}
 />
 
 <!-- Main Splitpanes -->

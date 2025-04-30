@@ -3,19 +3,19 @@
 	import Settings from '$lib/components/Settings.svelte';
 	import SvelteMarkdown from 'svelte-markdown';
 
-	const { autorunEnabled, runButtonClicked, onExampleLoad, generateShareableLink, isExampleModalOpen, toggleAutorun } = $props<{
+	const { autorunEnabled, runButtonClicked, onExampleLoad, generateShareableLink, isExampleModalOpen, toggleAutorun, onExampleModalChange } = $props<{
 		autorunEnabled: boolean;
 		runButtonClicked: () => void;
 		onExampleLoad: (filename: string) => any;
 		generateShareableLink: () => string;
 		isExampleModalOpen: boolean;
 		toggleAutorun: () => void;
+		onExampleModalChange: (isOpen: boolean) => void;
 	}>();
 
 	let helpModalOpen = $state(false);
 	let helpContent = $state('');
 	let settingsOpen = $state(false);
-	let examplesModalOpen = $state(false);
 	let runDropdownOpen = $state(false);
 
 	const inputExampleGroups = [
@@ -138,7 +138,7 @@
 				</div>
 			{/if}
 		</div>
-		<button class="examples-button" onclick={() => (examplesModalOpen = true)}>Examples</button>
+		<button class="examples-button" onclick={() => onExampleModalChange(true)}>Examples</button>
 		<button 
 			class="share-button" 
 			onclick={() => {
@@ -162,7 +162,7 @@
 </div>
 
 <!-- Examples Modal -->
-<Modal isOpen={examplesModalOpen} onClose={() => (examplesModalOpen = false)} title="Load Examples">
+<Modal isOpen={isExampleModalOpen} onClose={() => onExampleModalChange(false)} title="Load Examples">
 	<div class="examples-container">
 		{#each inputExampleGroups as { name, examples }}
 			<h2>{name}</h2>
@@ -174,12 +174,12 @@
 						tabindex="0" 
 						onclick={async () => {
 							await onExampleLoad(file);
-							examplesModalOpen = false;
+							onExampleModalChange(false);
 						}}
 						onkeydown={async (e) => {
 							if (e.key === 'Enter') {
 								await onExampleLoad(file);
-								examplesModalOpen = false;
+								onExampleModalChange(false);
 							}
 						}}>
 							{console.log(`/sample_inputs/images/${file.replace(/\.json$/, '.png')}`)}

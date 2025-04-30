@@ -251,6 +251,10 @@
 		monaco?.editor.getModels().forEach((model) => model.dispose());
 		diffEditor?.dispose();
 	});
+	
+	const onExampleModalChange = (isOpen: boolean) => {
+		isExampleModalOpen = isOpen;
+	}
 </script>
 
 <Navigation
@@ -260,6 +264,7 @@
 	{generateShareableLink}
 	{isExampleModalOpen}
 	{toggleAutorun}
+	{onExampleModalChange}
 />
 
 <div class="container">
