@@ -1,0 +1,67 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
+    "description": "Google's stock price over time.",
+    "data": {
+        "url": "data/stocks.csv"
+    },
+    "transform": [
+        {
+            "filter": "datum.symbol==='GOOG'"
+        }
+    ],
+    "mark": "line",
+    "encoding": {
+        "x": {
+            "field": "date",
+            "type": "temporal"
+        },
+        "y": {
+            "field": "price",
+            "type": "quantitative"
+        }
+    },
+    "annotations": [
+        {
+            "target": {
+                "type": "pixel-space",
+                "x": 170,
+                "y": 30
+            },
+            "text": {
+                "text": "A Peak",
+                "dx": -50
+            },
+            "connector": {
+                "style": {
+                    "strokeDash": []
+                },
+                "dx2": -10,
+                "dy2": -10,
+                "curve": "basis",
+                "curveDirection": "counterclockwise",
+                "curveTension": 2
+            }
+        },
+        {
+            "target": {
+                "type": "pixel-space",
+                "x": 230,
+                "y": 195
+            },
+            "text": {
+                "text": "A Valley",
+                "dy": 30,
+                "dx": -10
+            },
+            "connector": {
+                "style": {
+                    "strokeDash": []
+                },
+                "dy2": 10,
+                "curve": "linear",
+                "curveDirection": "counterclockwise",
+                "curveTension": 2
+            }
+        }
+    ]
+}

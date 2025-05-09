@@ -31,8 +31,8 @@
 				{ file: "00-base-scatterplot.json", name: "Scatterplot" },
 				{ file: "00-base-barchart.json", name: "Barchart" },
 				{ file: "00-base-linechart.json", name: "Linechart" },
-				{ file: "00-base-piechart.json", name: "Piechart" },
-				{ file: "00-base-areachart.json", name: "Areachart" },
+				// { file: "00-base-piechart.json", name: "Piechart" },
+				// { file: "00-base-areachart.json", name: "Areachart" },
 			]
 		},
 		{
@@ -40,6 +40,7 @@
 			examples: [
 				{ file: "01-text-scatterplot.json", name: "Scatterplot with text annotations" },
 				{ file: "01-text-barchart.json", name: "Barchart with text annotations" },
+				{ file: "01-text-linechart.json", name: "Linechart with text annotations" },
 			]
 		},
 		{
@@ -47,6 +48,7 @@
 			examples: [
 				{ file: "02-enclosure-scatterplot.json", name: "Scatterplot with enclosure annotations" },
 				{ file: "02-enclosure-barchart.json", name: "Barchart with enclosure annotations" },
+				{ file: "02-enclosure-linechart.json", name: "Linechart with enclosure annotations" },
 			]
 		},
 		{
@@ -54,6 +56,7 @@
 			examples: [
 				{ file: "03-connector-scatterplot.json", name: "Scatterplot with connector annotations" },
 				{ file: "03-connector-barchart.json", name: "Barchart with connector annotations" },
+				{ file: "03-connector-linechart.json", name: "Linechart with connector annotations" },
 			]
 		},
 		{
@@ -61,6 +64,7 @@
 			examples: [
 				{ file: "04-text-connector-scatterplot.json", name: "Scatterplot with text connector annotations" },
 				{ file: "04-text-connector-barchart.json", name: "Barchart with text connector annotations" },
+				{ file: "04-text-connector-linechart.json", name: "Linechart with text connector annotations" },
 			]
 		},
 		{
@@ -68,6 +72,7 @@
 			examples: [
 				{ file: "05-text-enclosure-scatterplot.json", name: "Scatterplot with text enclosure annotations" },
 				{ file: "05-text-enclosure-barchart.json", name: "Barchart with text enclosure annotations" },
+				{ file: "05-text-enclosure-linechart.json", name: "Linechart with text enclosure annotations" },
 			]
 		},
 		{
@@ -75,6 +80,7 @@
 			examples: [
 				{ file: "06-enclosure-connector-scatterplot.json", name: "Scatterplot with enclosure connector annotations" },
 				{ file: "06-enclosure-connector-barchart.json", name: "Barchart with enclosure connector annotations" },
+				{ file: "06-enclosure-connector-linechart.json", name: "Linechart with enclosure connector annotations" },
 			]
 		},
 		{
@@ -82,6 +88,15 @@
 			examples: [
 				{ file: "07-text-enclosure-connector-scatterplot.json", name: "Scatterplot with text enclosure connector annotations" },
 				{ file: "07-text-enclosure-connector-barchart.json", name: "Barchart with text enclosure connector annotations" },
+				{ file: "07-text-enclosure-connector-linechart.json", name: "Linechart with text enclosure connector annotations" },
+			]
+		},
+		{
+			name: "Same Data, Different Visualizations",
+			examples: [
+				{ file: "diffs/horizontal-barchart.json", name: "Horizontal Barchart" },
+				{ file: "diffs/vertical-barchart.json", name: "Vertical Barchart" },
+				{ file: "diffs/scatterplot.json", name: "Scatterplot" },
 			]
 		},
 		{
