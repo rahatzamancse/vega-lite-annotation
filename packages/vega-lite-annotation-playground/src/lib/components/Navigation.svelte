@@ -167,6 +167,11 @@
 	</div>
 	<div class="header-right">
 		<button
+			class="github-button"
+			onclick={() => window.open('https://github.com/rahatzamancse/vega-lite-annotation', '_blank')}
+			>GitHub</button
+		>
+		<button
 			class="help-button"
 			onclick={async () => {
 			helpContent = (await import('$lib/docs/help.md?raw')).default;
@@ -416,7 +421,8 @@
 
 	.help-button,
 	.settings-button,
-	.about-button {
+	.about-button,
+	.github-button {
 		padding: 0 1rem;
 		border: none;
 		border-radius: 0;
@@ -433,7 +439,8 @@
 
 	.help-button::before,
 	.settings-button::before,
-	.about-button::before {
+	.about-button::before,
+	.github-button::before {
 		font-size: 1.2rem;
 	}
 
@@ -445,9 +452,14 @@
 		content: '❓';
 	}
 
+	.github-button::before {
+		content: '🐙';
+	}
+
 	.help-button:hover,
 	.settings-button:hover,
-	.about-button:hover {
+	.about-button:hover,
+	.github-button:hover {
 		background: #f8f8f8;
 	}
 	.share-button {

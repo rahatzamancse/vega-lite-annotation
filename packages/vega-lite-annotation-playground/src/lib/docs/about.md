@@ -1,4 +1,5 @@
 # [ArXiv preprint](https://arxiv.org/abs/2507.04236)
+# [GitHub Repository](https://github.com/rahatzamancse/vega-lite-annotation)
 
 ## Authors
 
@@ -12,6 +13,12 @@
 This work has been submitted for publication and presents the theoretical foundation and implementation details of the annotation grammar.
 
 **Read the full paper:** [ArXiv preprint](https://arxiv.org/abs/2507.04236)
+
+## GitHub Repository
+
+The complete source code for this project is available on GitHub. You can explore the implementation, contribute to the project, or report issues.
+
+**View on GitHub:** [https://github.com/rahatzamancse/vega-lite-annotation](https://github.com/rahatzamancse/vega-lite-annotation)
 
 ## Project Overview
 
