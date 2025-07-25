@@ -15,6 +15,8 @@
 
 	let helpModalOpen = $state(false);
 	let helpContent = $state('');
+	let aboutModalOpen = $state(false);
+	let aboutContent = $state('');
 	let settingsOpen = $state(false);
 	let runDropdownOpen = $state(false);
 
@@ -172,6 +174,14 @@
 		}}
 			>Help</button
 		>
+		<button
+			class="about-button"
+			onclick={async () => {
+			aboutContent = (await import('$lib/docs/about.md?raw')).default;
+			aboutModalOpen = true
+		}}
+			>About</button
+		>
 		<!-- <button class="settings-button" onclick={() => (settingsOpen = !settingsOpen)}>Settings</button> -->
 	</div>
 </div>
@@ -218,6 +228,11 @@
 		// TODO: Implement setting changes
 	}}
 />
+
+<!-- About Modal -->
+<Modal isOpen={aboutModalOpen} onClose={() => (aboutModalOpen = false)} title="About VL-Annotations">
+	<SvelteMarkdown source={aboutContent} />
+</Modal>
 
 <!-- Help Modal -->
 <Modal isOpen={helpModalOpen} onClose={() => (helpModalOpen = false)} title="Help Documentation">
@@ -400,7 +415,8 @@
 	}
 
 	.help-button,
-	.settings-button {
+	.settings-button,
+	.about-button {
 		padding: 0 1rem;
 		border: none;
 		border-radius: 0;
@@ -416,12 +432,22 @@
 	}
 
 	.help-button::before,
-	.settings-button::before {
+	.settings-button::before,
+	.about-button::before {
 		font-size: 1.2rem;
 	}
 
+	.about-button::before {
+		content: 'ℹ️';
+	}
+
+	.help-button::before {
+		content: '❓';
+	}
+
 	.help-button:hover,
-	.settings-button:hover {
+	.settings-button:hover,
+	.about-button:hover {
 		background: #f8f8f8;
 	}
 	.share-button {
@@ -498,5 +524,133 @@
 		color: #333;
 		text-align: center;
 		width: 100%;
+	}
+
+	/* Markdown styling for modal content */
+	:global(.modal-content) {
+		line-height: 1.6;
+		color: #333;
+	}
+
+	:global(.modal-content h1) {
+		font-size: 1.8rem;
+		font-weight: 600;
+		margin: 0 0 1.5rem 0;
+		color: #1a1a1a;
+		border-bottom: 2px solid #e1e5e9;
+		padding-bottom: 0.5rem;
+	}
+
+	:global(.modal-content h2) {
+		font-size: 1.4rem;
+		font-weight: 600;
+		margin: 2rem 0 1rem 0;
+		color: #2c3e50;
+		border-bottom: 1px solid #e1e5e9;
+		padding-bottom: 0.3rem;
+	}
+
+	:global(.modal-content h3) {
+		font-size: 1.2rem;
+		font-weight: 600;
+		margin: 1.5rem 0 0.8rem 0;
+		color: #34495e;
+	}
+
+	:global(.modal-content p) {
+		margin: 0 0 1rem 0;
+		text-align: justify;
+		color: #444;
+	}
+
+	:global(.modal-content ul, .modal-content ol) {
+		margin: 0 0 1rem 0;
+		padding-left: 1.5rem;
+	}
+
+	:global(.modal-content li) {
+		margin: 0.3rem 0;
+		color: #444;
+	}
+
+	:global(.modal-content strong) {
+		font-weight: 600;
+		color: #2c3e50;
+	}
+
+	:global(.modal-content em) {
+		font-style: italic;
+		color: #555;
+	}
+
+	:global(.modal-content a) {
+		color: #3498db;
+		text-decoration: none;
+		border-bottom: 1px solid transparent;
+		transition: all 0.2s ease;
+	}
+
+	:global(.modal-content a:hover) {
+		color: #2980b9;
+		border-bottom-color: #2980b9;
+	}
+
+	:global(.modal-content code) {
+		background: #f8f9fa;
+		border: 1px solid #e9ecef;
+		border-radius: 3px;
+		padding: 0.1rem 0.3rem;
+		font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+		font-size: 0.9em;
+		color: #e83e8c;
+	}
+
+	:global(.modal-content pre) {
+		background: #f8f9fa;
+		border: 1px solid #e9ecef;
+		border-radius: 5px;
+		padding: 1rem;
+		overflow-x: auto;
+		margin: 1rem 0;
+	}
+
+	:global(.modal-content pre code) {
+		background: none;
+		border: none;
+		padding: 0;
+		color: #333;
+	}
+
+	:global(.modal-content blockquote) {
+		border-left: 4px solid #3498db;
+		background: #f8f9fa;
+		margin: 1rem 0;
+		padding: 0.8rem 1rem;
+		font-style: italic;
+		color: #555;
+	}
+
+	:global(.modal-content hr) {
+		border: none;
+		border-top: 1px solid #e1e5e9;
+		margin: 2rem 0;
+	}
+
+	:global(.modal-content table) {
+		width: 100%;
+		border-collapse: collapse;
+		margin: 1rem 0;
+	}
+
+	:global(.modal-content th, .modal-content td) {
+		border: 1px solid #e1e5e9;
+		padding: 0.5rem 0.8rem;
+		text-align: left;
+	}
+
+	:global(.modal-content th) {
+		background: #f8f9fa;
+		font-weight: 600;
+		color: #2c3e50;
 	}
 </style>
